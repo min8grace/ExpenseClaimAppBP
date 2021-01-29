@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using StoreManager.Application.Features.Categories.Queries.GetAllCached;
 using StoreManager.Application.Features.Categories.Queries.GetById;
-using StoreManager.Application.Features.Categorys.Commands.Create;
+using StoreManager.Application.Features.Categories.Commands.Create;
 using StoreManager.Domain.Entities.Expense;
 
 namespace StoreManager.Application.Mappings

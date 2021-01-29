@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 namespace StoreManager.Domain.Entities.Expense
 {
     public class Currency
-    {
-        [Key]
-        public string Code { get; set; }
+    {        
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Symbol { get; set; }
 

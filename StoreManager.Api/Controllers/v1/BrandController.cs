@@ -12,7 +12,7 @@ namespace StoreManager.Api.Controllers.v1
     public class BrandController : BaseApiController<BrandController>
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll() 
         {
             var brands = await _mediator.Send(new GetAllBrandsCachedQuery());
             return Ok(brands);

@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using StoreManager.Domain.Entities.Expense;
 
 namespace StoreManager.Infrastructure.DbContexts
 {
@@ -23,6 +24,10 @@ namespace StoreManager.Infrastructure.DbContexts
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Claim> Claims { get; set; }
+        public DbSet<LineItem> LineItems { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         public IDbConnection Connection => Database.GetDbConnection();
 
@@ -57,6 +62,11 @@ namespace StoreManager.Infrastructure.DbContexts
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Claim>().ToTable("Claim");
+            builder.Entity<LineItem>().ToTable("LineItem");
+            builder.Entity<Currency>().ToTable("Currency");
+            builder.Entity<Category>().ToTable("Category");
+
             foreach (var property in builder.Model.GetEntityTypes()
             .SelectMany(t => t.GetProperties())
             .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))

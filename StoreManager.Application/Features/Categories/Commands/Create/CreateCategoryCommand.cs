@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using StoreManager.Domain.Entities.Expense;
 
-namespace StoreManager.Application.Features.Categorys.Commands.Create
+namespace StoreManager.Application.Features.Categories.Commands.Create
 {
     public partial class CreateCategoryCommand : IRequest<Result<int>>
     {

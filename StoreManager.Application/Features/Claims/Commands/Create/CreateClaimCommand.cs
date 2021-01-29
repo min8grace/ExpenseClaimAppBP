@@ -12,7 +12,6 @@ namespace StoreManager.Application.Features.Claims.Commands.Create
 {
     public partial class CreateClaimCommand : IRequest<Result<int>>
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public int Requester { get; set; }
         public int Approver { get; set; }

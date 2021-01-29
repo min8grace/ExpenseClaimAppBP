@@ -12,13 +12,13 @@ namespace StoreManager.Application.Interfaces.Repositories
         IQueryable<Claim> Claims { get; }
 
         Task<List<Claim>> GetListAsync();
+        
+        Task<Claim> GetByIdAsync(int claimId);
 
-        Task<Claim> GetByIdAsync(int brandId);
+        Task<int> InsertAsync(Claim claim);
 
-        Task<int> InsertAsync(Claim brand);
+        Task UpdateAsync(Claim claim);
 
-        Task UpdateAsync(Claim brand);
-
-        Task DeleteAsync(Claim brand);
+        Task DeleteAsync(Claim claim);
     }
 }

@@ -14,37 +14,37 @@ namespace StoreManager.Infrastructure.CacheRepositories
     public class ClaimCacheRepository : IClaimCacheRepository
     {
         private readonly IDistributedCache _distributedCache;
-        private readonly IClaimRepository _brandRepository;
+        private readonly IClaimRepository _claimRepository;
 
-        public ClaimCacheRepository(IDistributedCache distributedCache, IClaimRepository brandRepository)
+        public ClaimCacheRepository(IDistributedCache distributedCache, IClaimRepository claimRepository)
         {
             _distributedCache = distributedCache;
-            _brandRepository = brandRepository;
+            _claimRepository = claimRepository;
         }
 
-        public async Task<Claim> GetByIdAsync(int brandId)
+        public async Task<Claim> GetByIdAsync(int claimId)
         {
-            string cacheKey = ClaimCacheKeys.GetKey(brandId);
-            var brand = await _distributedCache.GetAsync<Claim>(cacheKey);
-            if (brand == null)
+            string cacheKey = ClaimCacheKeys.GetKey(claimId);
+            var claim = await _distributedCache.GetAsync<Claim>(cacheKey);
+            if (claim == null)
             {
-                brand = await _brandRepository.GetByIdAsync(brandId);
-                Throw.Exception.IfNull(brand, "Claim", "No Claim Found");
-                await _distributedCache.SetAsync(cacheKey, brand);
+                claim = await _claimRepository.GetByIdAsync(claimId);
+                Throw.Exception.IfNull(claim, "Claim", "No Claim Found");
+                await _distributedCache.SetAsync(cacheKey, claim);
             }
-            return brand;
+            return claim;
         }
 
         public async Task<List<Claim>> GetCachedListAsync()
         {
             string cacheKey = ClaimCacheKeys.ListKey;
-            var brandList = await _distributedCache.GetAsync<List<Claim>>(cacheKey);
-            if (brandList == null)
+            var claimList = await _distributedCache.GetAsync<List<Claim>>(cacheKey);
+            if (claimList == null)
             {
-                brandList = await _brandRepository.GetListAsync();
-                await _distributedCache.SetAsync(cacheKey, brandList);
+                claimList = await _claimRepository.GetListAsync();
+                await _distributedCache.SetAsync(cacheKey, claimList);
             }
-            return brandList;
+            return claimList;
         }
     }
 }

@@ -23,16 +23,16 @@ namespace StoreManager.Infrastructure.Repositories
 
         public IQueryable<Claim> Claims => _repository.Entities;
 
-        public async Task DeleteAsync(Claim brand)
+        public async Task DeleteAsync(Claim claim)
         {
-            await _repository.DeleteAsync(brand);
+            await _repository.DeleteAsync(claim);
             await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.ListKey);
-            await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.GetKey(brand.Id));
+            await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.GetKey(claim.Id));
         }
 
-        public async Task<Claim> GetByIdAsync(int brandId)
+        public async Task<Claim> GetByIdAsync(int claimId)
         {
-            return await _repository.Entities.Where(p => p.Id == brandId).FirstOrDefaultAsync();
+            return await _repository.Entities.Where(p => p.Id == claimId).FirstOrDefaultAsync();
         }
 
         public async Task<List<Claim>> GetListAsync()
@@ -40,18 +40,18 @@ namespace StoreManager.Infrastructure.Repositories
             return await _repository.Entities.ToListAsync();
         }
 
-        public async Task<int> InsertAsync(Claim brand)
+        public async Task<int> InsertAsync(Claim claim)
         {
-            await _repository.AddAsync(brand);
+            await _repository.AddAsync(claim);
             await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.ListKey);
-            return brand.Id;
+            return claim.Id;
         }
 
-        public async Task UpdateAsync(Claim brand)
+        public async Task UpdateAsync(Claim claim)
         {
-            await _repository.UpdateAsync(brand);
+            await _repository.UpdateAsync(claim);
             await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.ListKey);
-            await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.GetKey(brand.Id));
+            await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.GetKey(claim.Id));
         }
     }
 }

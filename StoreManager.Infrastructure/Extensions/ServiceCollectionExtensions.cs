@@ -32,6 +32,7 @@ namespace StoreManager.Infrastructure.Extensions
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IClaimRepository, ClaimRepository>();
             services.AddTransient<ILineItemRepository, LineItemRepository>();
+            services.AddTransient<ICurrencyRepository, CurrencyRepository>();
             #endregion Repositories
         }
     }

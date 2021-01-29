@@ -12,8 +12,8 @@ namespace StoreManager.Infrastructure.CacheKeys
 
         public static string SelectListKey => "ClaimSelectList";
 
-        public static string GetKey(int brandId) => $"Claim-{brandId}";
+        public static string GetKey(int claimId) => $"Claim-{claimId}";
 
-        public static string GetDetailsKey(int brandId) => $"ClaimDetails-{brandId}";
+        public static string GetDetailsKey(int claimId) => $"ClaimDetails-{claimId}";
     }
 }

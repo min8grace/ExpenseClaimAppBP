@@ -31,6 +31,7 @@ namespace StoreManager.Infrastructure.Extensions
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IClaimRepository, ClaimRepository>();
+            services.AddTransient<ILineItemRepository, LineItemRepository>();
             #endregion Repositories
         }
     }

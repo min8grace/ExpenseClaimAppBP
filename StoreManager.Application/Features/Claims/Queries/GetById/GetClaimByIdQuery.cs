@@ -1,4 +1,4 @@
-﻿using StoreManager.Application.Interfaces.CacheRepositories;
+﻿using StoreManager.Application.Interfaces.Repositories;
 using AspNetCoreHero.Results;
 using AutoMapper;
 using MediatR;
@@ -13,18 +13,18 @@ namespace StoreManager.Application.Features.Claims.Queries.GetById
 
         public class GetProductByIdQueryHandler : IRequestHandler<GetClaimByIdQuery, Result<GetClaimByIdResponse>>
         {
-            private readonly IClaimCacheRepository _claimCache;
+            private readonly IClaimRepository _claim;
             private readonly IMapper _mapper;
 
-            public GetProductByIdQueryHandler(IClaimCacheRepository productCache, IMapper mapper)
+            public GetProductByIdQueryHandler(IClaimRepository product, IMapper mapper)
             {
-                _claimCache = productCache;
+                _claim = product;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetClaimByIdResponse>> Handle(GetClaimByIdQuery query, CancellationToken cancellationToken)
             {
-                var product = await _claimCache.GetByIdAsync(query.Id);
+                var product = await _claim.GetByIdAsync(query.Id);
                 var mappedProduct = _mapper.Map<GetClaimByIdResponse>(product);
                 return Result<GetClaimByIdResponse>.Success(mappedProduct);
             }

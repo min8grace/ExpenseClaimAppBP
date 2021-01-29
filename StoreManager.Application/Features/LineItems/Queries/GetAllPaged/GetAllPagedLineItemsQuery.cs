@@ -12,39 +12,39 @@ using StoreManager.Domain.Entities.Expense;
 
 namespace StoreManager.Application.Features.LineItems.Queries.GetAllPaged
 {
-    public class GetAllLineItemsQuery : IRequest<PaginatedResult<GetAllLineItemsResponse>>
+    public class GetAllPagedLineItemsQuery : IRequest<PaginatedResult<GetAllPagedLinItemsResponse>>
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
 
-        public GetAllLineItemsQuery(int pageNumber, int pageSize)
+        public GetAllPagedLineItemsQuery(int pageNumber, int pageSize)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
         }
     }
 
-    public class GGetAllLineItemsQueryHandler : IRequestHandler<GetAllLineItemsQuery, PaginatedResult<GetAllLineItemsResponse>>
+    public class GGetAllPagedLineItemsQueryHandler : IRequestHandler<GetAllPagedLineItemsQuery, PaginatedResult<GetAllPagedLinItemsResponse>>
     {
         private readonly ILineItemRepository _repository;
 
-        public GGetAllLineItemsQueryHandler(ILineItemRepository repository)
+        public GGetAllPagedLineItemsQueryHandler(ILineItemRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<PaginatedResult<GetAllLineItemsResponse>> Handle(GetAllLineItemsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<GetAllPagedLinItemsResponse>> Handle(GetAllPagedLineItemsQuery request, CancellationToken cancellationToken)
         {
-            Expression<Func<LineItem, GetAllLineItemsResponse>> expression = e => new GetAllLineItemsResponse
+            Expression<Func<LineItem, GetAllPagedLinItemsResponse>> expression = e => new GetAllPagedLinItemsResponse
             {
                 Id = e.Id,
-                ClaimId = e.ClaimId,
-                CategoryId = e.CategoryId,
+                //ClaimId = e.ClaimId,
+                //CategoryId = e.CategoryId,
                 Payee = e.Payee,
                 Date = e.Date,
                 Description = e.Description,
                 Amount = e.Amount,
-                CurrencyCode = e.CurrencyCode,
+                //CurrencyCode = e.CurrencyCode,
                 USDAmount = e.USDAmount,
 
             };

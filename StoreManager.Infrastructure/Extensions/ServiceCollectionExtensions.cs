@@ -30,7 +30,7 @@ namespace StoreManager.Infrastructure.Extensions
             services.AddTransient<IBrandCacheRepository, BrandCacheRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+            services.AddTransient<IClaimRepository, ClaimRepository>();
             #endregion Repositories
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace StoreManager.Application.Features.Categories.Queries.GetAllCached
+﻿namespace StoreManager.Application.Features.Categories.Queries.GetAllCategories
 {
-    public class GetAllCategoriesCachedResponse
+    public class GetAllCategoriesResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }

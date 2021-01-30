@@ -12,7 +12,7 @@ namespace StoreManager.Application.Features.LineItems.Queries.GetAllLineItems
         public string Description { get; set; }
 
         public Decimal Amount { get; set; }
-        public string CurrencyId { get; set; }
+        public int CurrencyId { get; set; }
         public Decimal USDAmount { get; set; }
 
         public byte[] Receipt { get; set; }//image

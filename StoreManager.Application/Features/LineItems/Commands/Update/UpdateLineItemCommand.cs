@@ -18,7 +18,7 @@ namespace StoreManager.Application.Features.LineItems.Commands.Update
         public string Description { get; set; }
 
         public Decimal Amount { get; set; }
-        public string CurrencyId { get; set; }
+        public int CurrencyId { get; set; }
         public Decimal USDAmount { get; set; }
 
         public class UpdateLineItemCommandHandler : IRequestHandler<UpdateLineItemCommand, Result<int>>

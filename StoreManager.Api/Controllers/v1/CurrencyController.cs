@@ -2,7 +2,7 @@
 using StoreManager.Application.Features.Currencies.Commands.Create;
 using StoreManager.Application.Features.Currencies.Commands.Delete;
 using StoreManager.Application.Features.Currencies.Commands.Update;
-using StoreManager.Application.Features.Currencies.Queries.GetAllCached;
+using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
 using StoreManager.Application.Features.Currencies.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace StoreManager.Api.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _mediator.Send(new GetAllCurrenciesCachedQuery());
+            var brands = await _mediator.Send(new GetAllCurrenciesQuery());
             return Ok(brands);
         }
 

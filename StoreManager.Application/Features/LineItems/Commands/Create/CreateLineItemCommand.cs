@@ -19,7 +19,7 @@ namespace StoreManager.Application.Features.LineItems.Commands.Create
         public string Description { get; set; }
 
         public Decimal Amount { get; set; }
-        public string CurrencyCode { get; set; }
+        public string CurrencyId { get; set; }
         public Decimal USDAmount { get; set; }
     }
 

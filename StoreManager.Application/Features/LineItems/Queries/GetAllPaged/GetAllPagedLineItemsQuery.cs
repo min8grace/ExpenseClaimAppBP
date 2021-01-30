@@ -44,7 +44,7 @@ namespace StoreManager.Application.Features.LineItems.Queries.GetAllPaged
                 Date = e.Date,
                 Description = e.Description,
                 Amount = e.Amount,
-                //CurrencyCode = e.CurrencyCode,
+                //CurrencyId = e.CurrencyId,
                 USDAmount = e.USDAmount,
 
             };

@@ -2,7 +2,7 @@
 using StoreManager.Application.Features.LineItems.Commands.Create;
 using StoreManager.Application.Features.LineItems.Commands.Delete;
 using StoreManager.Application.Features.LineItems.Commands.Update;
-using StoreManager.Application.Features.LineItems.Queries.GetAllCached;
+using StoreManager.Application.Features.LineItems.Queries.GetAllLineItems;
 using StoreManager.Application.Features.LineItems.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace StoreManager.Api.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _mediator.Send(new GetAllLineItemsCachedQuery());
+            var brands = await _mediator.Send(new GetAllLineItemsQuery());
             return Ok(brands);
         }
 

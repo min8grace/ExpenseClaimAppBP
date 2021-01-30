@@ -2,7 +2,7 @@
 using StoreManager.Application.Features.Claims.Commands.Create;
 using StoreManager.Application.Features.Claims.Commands.Delete;
 using StoreManager.Application.Features.Claims.Commands.Update;
-using StoreManager.Application.Features.Claims.Queries.GetAllCached;
+using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace StoreManager.Api.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _mediator.Send(new GetAllClaimsCachedQuery());
+            var brands = await _mediator.Send(new GetAllClaimsQuery());
             return Ok(brands);
         }
 

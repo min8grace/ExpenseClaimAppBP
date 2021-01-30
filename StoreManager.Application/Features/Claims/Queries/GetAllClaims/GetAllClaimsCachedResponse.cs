@@ -1,9 +1,9 @@
 ﻿using StoreManager.Domain.Entities.Expense;
 using System;
 
-namespace StoreManager.Application.Features.Claims.Queries.GetAllCached
+namespace StoreManager.Application.Features.Claims.Queries.GetAllClaims
 {
-    public class GetAllClaimsCachedResponse
+    public class GetAllClaimsResponse
     {
         public int Id { get; set; }
         public string Title { get; set; }

@@ -1,5 +1,5 @@
 ﻿using StoreManager.Application.Features.Claims.Commands.Create;
-using StoreManager.Application.Features.Claims.Queries.GetAllCached;
+using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
 using StoreManager.Domain.Entities.Catalog;
 using AutoMapper;
@@ -13,7 +13,7 @@ namespace StoreManager.Application.Mappings
         {
             CreateMap<CreateClaimCommand, Claim>().ReverseMap();
             CreateMap<GetClaimByIdResponse, Claim>().ReverseMap();
-            CreateMap<GetAllClaimsCachedResponse, Claim>().ReverseMap();
+            CreateMap<GetAllClaimsResponse, Claim>().ReverseMap();
         }
     }
 }

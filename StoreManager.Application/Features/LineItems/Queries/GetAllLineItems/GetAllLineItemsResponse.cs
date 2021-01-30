@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace StoreManager.Application.Features.LineItems.Queries.GetAllCached
+namespace StoreManager.Application.Features.LineItems.Queries.GetAllLineItems
 {
-    public class GetAllLineItemsCachedResponse
+    public class GetAllLineItemsResponse
     {
         public int Id { get; set; }
         public int ClaimId { get; set; }

@@ -1,4 +1,4 @@
-﻿using StoreManager.Application.Interfaces.CacheRepositories;
+﻿using StoreManager.Application.Interfaces.Repositories;
 using AspNetCoreHero.Results;
 using AutoMapper;
 using MediatR;
@@ -13,18 +13,18 @@ namespace StoreManager.Application.Features.LineItems.Queries.GetById
 
         public class GetLineItemByIdQueryHandler : IRequestHandler<GetLineItemByIdQuery, Result<GetLineItemByIdResponse>>
         {
-            private readonly ILineItemCacheRepository _lineItemCache;
+            private readonly ILineItemRepository _lineItem;
             private readonly IMapper _mapper;
 
-            public GetLineItemByIdQueryHandler(ILineItemCacheRepository lineItemCache, IMapper mapper)
+            public GetLineItemByIdQueryHandler(ILineItemRepository lineItem, IMapper mapper)
             {
-                _lineItemCache = lineItemCache;
+                _lineItem = lineItem;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetLineItemByIdResponse>> Handle(GetLineItemByIdQuery query, CancellationToken cancellationToken)
             {
-                var lineItem = await _lineItemCache.GetByIdAsync(query.Id);
+                var lineItem = await _lineItem.GetByIdAsync(query.Id);
                 var mappedLineItem = _mapper.Map<GetLineItemByIdResponse>(lineItem);
                 return Result<GetLineItemByIdResponse>.Success(mappedLineItem);
             }

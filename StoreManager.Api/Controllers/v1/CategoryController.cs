@@ -3,7 +3,7 @@ using StoreManager.API.Controllers;
 using StoreManager.Application.Features.Categories.Commands.Create;
 using StoreManager.Application.Features.Categories.Commands.Delete;
 using StoreManager.Application.Features.Categories.Commands.Update;
-using StoreManager.Application.Features.Categories.Queries.GetAllCached;
+using StoreManager.Application.Features.Categories.Queries.GetAllCategories;
 using StoreManager.Application.Features.Categories.Queries.GetById;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace StoreManager.Api.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _mediator.Send(new GetAllCategoriesCachedQuery());
+            var brands = await _mediator.Send(new GetAllCategoriesQuery());
             return Ok(brands);
         }
 

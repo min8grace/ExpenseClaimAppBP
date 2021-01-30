@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using StoreManager.Application.Features.Currencies.Commands.Create;
-using StoreManager.Application.Features.Currencies.Queries.GetAllCached;
+using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
 using StoreManager.Application.Features.Currencies.Queries.GetById;
 using StoreManager.Domain.Entities.Expense;
 
@@ -12,7 +12,7 @@ namespace StoreManager.Application.Mappings
         {
             CreateMap<CreateCurrencyCommand, Currency>().ReverseMap();
             CreateMap<GetCurrencyByIdResponse, Currency>().ReverseMap();
-            CreateMap<GetAllCurrenciesCachedResponse, Currency>().ReverseMap();
+            CreateMap<GetAllCurrenciesResponse, Currency>().ReverseMap();
         }
     }
 }

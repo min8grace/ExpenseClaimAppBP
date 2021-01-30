@@ -18,7 +18,7 @@ namespace StoreManager.Domain.Entities.Expense
         public string Description { get; set; }
 
         public Decimal Amount { get; set; } //= 300.5m;
-        public string CurrencyId { get; set; }
+        public int CurrencyId { get; set; }
         public Decimal USDAmount { get; set; } //= 300.5m;
 
         public byte[] Receipt { get; set; }//image

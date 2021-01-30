@@ -1,4 +1,4 @@
-﻿using StoreManager.Application.Interfaces.CacheRepositories;
+﻿using StoreManager.Application.Interfaces.Repositories;
 using AspNetCoreHero.Results;
 using AutoMapper;
 using MediatR;
@@ -13,18 +13,18 @@ namespace StoreManager.Application.Features.Currencies.Queries.GetById
 
         public class GetProductByIdQueryHandler : IRequestHandler<GetCurrencyByIdQuery, Result<GetCurrencyByIdResponse>>
         {
-            private readonly ICurrencyCacheRepository _currencyCache;
+            private readonly ICurrencyRepository _currency;
             private readonly IMapper _mapper;
 
-            public GetProductByIdQueryHandler(ICurrencyCacheRepository productCache, IMapper mapper)
+            public GetProductByIdQueryHandler(ICurrencyRepository product, IMapper mapper)
             {
-                _currencyCache = productCache;
+                _currency = product;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetCurrencyByIdResponse>> Handle(GetCurrencyByIdQuery query, CancellationToken cancellationToken)
             {
-                var product = await _currencyCache.GetByIdAsync(query.Id);
+                var product = await _currency.GetByIdAsync(query.Id);
                 var mappedProduct = _mapper.Map<GetCurrencyByIdResponse>(product);
                 return Result<GetCurrencyByIdResponse>.Success(mappedProduct);
             }

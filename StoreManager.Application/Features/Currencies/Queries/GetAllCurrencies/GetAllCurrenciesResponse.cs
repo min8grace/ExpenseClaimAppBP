@@ -1,6 +1,6 @@
-﻿namespace StoreManager.Application.Features.Currencies.Queries.GetAllCached
+﻿namespace StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies
 {
-    public class GetAllCurrenciesCachedResponse
+    public class GetAllCurrenciesResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }

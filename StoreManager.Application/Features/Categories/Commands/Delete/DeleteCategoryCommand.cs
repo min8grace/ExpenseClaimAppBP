@@ -23,10 +23,10 @@ namespace StoreManager.Application.Features.Categories.Commands.Delete
 
             public async Task<Result<int>> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
             {
-                var product = await _categoryRepository.GetByIdAsync(command.Id);
-                await _categoryRepository.DeleteAsync(product);
+                var category = await _categoryRepository.GetByIdAsync(command.Id);
+                await _categoryRepository.DeleteAsync(category);
                 await _unitOfWork.Commit(cancellationToken);
-                return Result<int>.Success(product.Id);
+                return Result<int>.Success(category.Id);
             }
         }
     }

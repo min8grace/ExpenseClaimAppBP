@@ -11,22 +11,22 @@ namespace StoreManager.Application.Features.Categories.Queries.GetById
     {
         public int Id { get; set; }
 
-        public class GetProductByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<GetCategoryByIdResponse>>
+        public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<GetCategoryByIdResponse>>
         {
             private readonly ICategoryRepository _category;
             private readonly IMapper _mapper;
 
-            public GetProductByIdQueryHandler(ICategoryRepository product, IMapper mapper)
+            public GetCategoryByIdQueryHandler(ICategoryRepository category, IMapper mapper)
             {
-                _category = product;
+                _category = category;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetCategoryByIdResponse>> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
             {
-                var product = await _category.GetByIdAsync(query.Id);
-                var mappedProduct = _mapper.Map<GetCategoryByIdResponse>(product);
-                return Result<GetCategoryByIdResponse>.Success(mappedProduct);
+                var category = await _category.GetByIdAsync(query.Id);
+                var mappedCategory = _mapper.Map<GetCategoryByIdResponse>(category);
+                return Result<GetCategoryByIdResponse>.Success(mappedCategory);
             }
         }
     }

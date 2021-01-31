@@ -17,18 +17,18 @@ namespace StoreManager.Application.Features.Categories.Queries.GetAllCategories
 
     public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery, Result<List<GetAllCategoriesResponse>>>
     {
-        private readonly ICategoryRepository _product;
+        private readonly ICategoryRepository _category;
         private readonly IMapper _mapper;
 
-        public GetAllCategoriesQueryHandler(ICategoryRepository product, IMapper mapper)
+        public GetAllCategoriesQueryHandler(ICategoryRepository category, IMapper mapper)
         {
-            _product = product;
+            _category = category;
             _mapper = mapper;
         }
 
         public async Task<Result<List<GetAllCategoriesResponse>>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var categoryList = await _product.GetListAsync();
+            var categoryList = await _category.GetListAsync();
             var mappedCategories = _mapper.Map<List<GetAllCategoriesResponse>>(categoryList);
             return Result<List<GetAllCategoriesResponse>>.Success(mappedCategories);
         }

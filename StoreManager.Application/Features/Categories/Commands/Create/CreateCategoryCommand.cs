@@ -11,7 +11,7 @@ namespace StoreManager.Application.Features.Categories.Commands.Create
 {
     public partial class CreateCategoryCommand : IRequest<Result<int>>
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
     }
@@ -32,10 +32,10 @@ namespace StoreManager.Application.Features.Categories.Commands.Create
 
         public async Task<Result<int>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var product = _mapper.Map<Category>(request);
-            await _categoryRepository.InsertAsync(product);
+            var category = _mapper.Map<Category>(request);
+            await _categoryRepository.InsertAsync(category);
             await _unitOfWork.Commit(cancellationToken);
-            return Result<int>.Success(product.Id);
+            return Result<int>.Success(category.Id);
         }
     }
 }

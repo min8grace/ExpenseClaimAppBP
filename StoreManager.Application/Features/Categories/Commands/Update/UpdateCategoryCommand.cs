@@ -12,12 +12,12 @@ namespace StoreManager.Application.Features.Categories.Commands.Update
         public string Name { get; set; }
         public string Code { get; set; }
 
-        public class UpdateProductCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<int>>
+        public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<int>>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly ICategoryRepository _categoryRepository;
 
-            public UpdateProductCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+            public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
             {
                 _categoryRepository = categoryRepository;
                 _unitOfWork = unitOfWork;

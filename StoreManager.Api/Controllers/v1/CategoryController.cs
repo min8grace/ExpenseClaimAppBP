@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StoreManager.API.Controllers;
 using StoreManager.Application.Features.Categories.Commands.Create;
 using StoreManager.Application.Features.Categories.Commands.Delete;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace StoreManager.Api.Controllers.v1
 {
+    [AllowAnonymous]
+    [ApiVersion("1.0")]
     public class CategoryController : BaseApiController<CategoryController>
     {
         [HttpGet]

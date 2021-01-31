@@ -6,9 +6,12 @@ using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
 using StoreManager.Application.Features.Currencies.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreManager.Api.Controllers.v1
 {
+    [AllowAnonymous]
+    [ApiVersion("1.0")]
     public class CurrencyController : BaseApiController<CurrencyController>
     {
         [HttpGet]

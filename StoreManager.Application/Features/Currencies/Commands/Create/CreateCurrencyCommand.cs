@@ -11,7 +11,7 @@ namespace StoreManager.Application.Features.Currencies.Commands.Create
 {
     public partial class CreateCurrencyCommand : IRequest<Result<int>>
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string Name { get; set; }
         public string Symbol { get; set; }
 

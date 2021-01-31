@@ -23,7 +23,7 @@ namespace StoreManager.Domain.Entities.Expense
 
         public byte[] Receipt { get; set; }//image
 
-        //public virtual Claim Claim { get; set; }
+        public virtual Claim Claim { get; set; }
         public virtual Category Category { get; set; }
         public virtual Currency Currency { get; set; }
     }

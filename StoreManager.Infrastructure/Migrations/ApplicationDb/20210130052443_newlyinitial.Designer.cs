@@ -10,8 +10,8 @@ using StoreManager.Infrastructure.DbContexts;
 namespace StoreManager.Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210129091853_CurrencyPKTypeChange")]
-    partial class CurrencyPKTypeChange
+    [Migration("20210130052443_newlyinitial")]
+    partial class newlyinitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -250,10 +250,7 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CurrencyCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CurrencyId")
+                    b.Property<int>("CurrencyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -271,6 +268,9 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
 
                     b.Property<string>("Payee")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Receipt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<decimal>("USDAmount")
                         .HasColumnType("decimal(18,2)");
@@ -305,7 +305,7 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StoreManager.Domain.Entities.Expense.Claim", null)
+                    b.HasOne("StoreManager.Domain.Entities.Expense.Claim", "Claim")
                         .WithMany("LineItems")
                         .HasForeignKey("ClaimId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -313,9 +313,13 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
 
                     b.HasOne("StoreManager.Domain.Entities.Expense.Currency", "Currency")
                         .WithMany("LineItems")
-                        .HasForeignKey("CurrencyId");
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Claim");
 
                     b.Navigation("Currency");
                 });

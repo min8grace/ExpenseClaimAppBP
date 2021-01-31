@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace StoreManager.Infrastructure.Migrations.ApplicationDb
 {
-    public partial class entities : Migration
+    public partial class newlyinitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,13 +52,14 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                 name: "Currency",
                 columns: table => new
                 {
-                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Symbol = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Currency", x => x.Code);
+                    table.PrimaryKey("PK_Currency", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,8 +74,9 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CurrencyCode = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CurrencyId = table.Column<int>(type: "int", nullable: false),
                     USDAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Receipt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -96,11 +98,11 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LineItem_Currency_CurrencyCode",
-                        column: x => x.CurrencyCode,
+                        name: "FK_LineItem_Currency_CurrencyId",
+                        column: x => x.CurrencyId,
                         principalTable: "Currency",
-                        principalColumn: "Code",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -114,9 +116,9 @@ namespace StoreManager.Infrastructure.Migrations.ApplicationDb
                 column: "ClaimId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineItem_CurrencyCode",
+                name: "IX_LineItem_CurrencyId",
                 table: "LineItem",
-                column: "CurrencyCode");
+                column: "CurrencyId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

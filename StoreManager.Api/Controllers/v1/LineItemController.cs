@@ -6,9 +6,12 @@ using StoreManager.Application.Features.LineItems.Queries.GetAllLineItems;
 using StoreManager.Application.Features.LineItems.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreManager.Api.Controllers.v1
 {
+    [AllowAnonymous]
+    [ApiVersion("1.0")]
     public class LineItemController : BaseApiController<LineItemController>
     {
         [HttpGet]

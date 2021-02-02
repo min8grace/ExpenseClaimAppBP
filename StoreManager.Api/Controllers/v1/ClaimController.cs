@@ -6,11 +6,15 @@ using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreManager.Api.Controllers.v1
 {
+    [AllowAnonymous]
+    [ApiVersion("1.0")]
     public class ClaimController : BaseApiController<ClaimController>
     {
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

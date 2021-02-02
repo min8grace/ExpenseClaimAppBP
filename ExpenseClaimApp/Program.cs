@@ -1,3 +1,6 @@
+using AutoMapper;
+using ExpenseClaimApp.Models;
+using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +20,26 @@ namespace ExpenseClaimApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddHttpClient<ICategoryService, CategoryService>
+                        (client => client.BaseAddress = new Uri("https://localhost:44377/"));
+
+            builder.Services.AddAutoMapper(typeof(CategoryProfile));
+
+            //services.AddHttpClient<IClaimService, ClaimService>(client =>
+            //{
+            //    client.BaseAddress = new Uri("https://localhost:44377/");
+            //});
+
+            //builder.Services.AddSingleton(new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://localhost:5001")
+            //});
+            //builder.Services.AddHttpClient<IClient, Client>(client => client.BaseAddress = new Uri("https://localhost:5001"));
+            //builder.Services.AddScoped<ICategoryService, CategoryService>();
+            //builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            //builder.Services.AddHttpClient<ICountryDataService, CountryDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            //builder.Services.AddHttpClient<IJobCategoryDataService, JobCategoryDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();
         }

@@ -24,13 +24,17 @@ namespace StoreManager.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
             services.AddApplicationLayer();
             services.AddContextInfrastructure(_configuration);
             services.AddPersistenceContexts(_configuration);
             services.AddRepositories();
             services.AddSharedInfrastructure(_configuration);
-            services.AddEssentials();
+            services.AddEssentials(); //   services.RegisterSwagger();   services.AddVersioning();
+
             services.AddControllers();
+
             services.AddMvc(o =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -38,6 +42,13 @@ namespace StoreManager.Api
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.AddCors(options => options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+            //services.AddCors(options =>
+            //{
+            //    //options.AddPolicy("Default", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            //    options.AddPolicy("Default", builder => builder.WithOrigins("https://localhost:44368/", "https://localhost:44377/").AllowAnyHeader().AllowAnyMethod());
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +63,7 @@ namespace StoreManager.Api
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseRouting();
 
-            app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -62,4 +73,6 @@ namespace StoreManager.Api
             });
         }
     }
+
+
 }

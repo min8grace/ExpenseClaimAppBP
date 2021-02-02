@@ -6,9 +6,11 @@ using StoreManager.Application.Features.Brands.Queries.GetAllCached;
 using StoreManager.Application.Features.Brands.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreManager.Api.Controllers.v1
 {
+    [AllowAnonymous]
     public class BrandController : BaseApiController<BrandController>
     {
         [HttpGet]

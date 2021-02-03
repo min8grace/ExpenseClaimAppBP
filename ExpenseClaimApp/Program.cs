@@ -22,8 +22,10 @@ namespace ExpenseClaimApp
 
             builder.Services.AddHttpClient<ICategoryService, CategoryService>
                         (client => client.BaseAddress = new Uri("https://localhost:44377/"));
-
+            builder.Services.AddHttpClient<ICurrencyService, CurrencyService>
+                   (client => client.BaseAddress = new Uri("https://localhost:44377/"));
             builder.Services.AddAutoMapper(typeof(CategoryProfile));
+            builder.Services.AddAutoMapper(typeof(CurrencyProfile));
 
             //services.AddHttpClient<IClaimService, ClaimService>(client =>
             //{

@@ -51,13 +51,14 @@ namespace ExpenseClaimApp.Pages.Inspection
             Categories = (await CategoryService.GetCategories()).ToList();
             CategoryId = LineItem.CategoryId.ToString();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
-            CurrencyId = LineItem.CurrencyId.ToString();
+            CurrencyId = LineItem.CurrencyId.ToString();            
 
         }
         protected async Task Select_Click(int InputId, int b)
         {
             LineItem = await LineItemService.GetLineItemById(InputId);
             Mapper.Map(LineItem, LineItemEditModel);
+            Description = LineItem.Description;
         }
         protected async Task Delete_Click(int InputId)
         {
@@ -86,6 +87,7 @@ namespace ExpenseClaimApp.Pages.Inspection
             StoreManager.Domain.Entities.Expense.LineItem result = null;
             if (LineItem.Id != 0)
             {
+                LineItem.Description = Description;
                 await LineItemService.UpdateLineItem(LineItem);
                 StatusClass = "alert-success";
                 Message = "Employee updated successfully.";

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreManager.Api", "StoreManager.Api\StoreManager.Api.csproj", "{FF4CA941-2F88-4B88-A936-4925F36070B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreManager.XXXXXWeb", "StoreManager.Web\StoreManager.XXXXXWeb.csproj", "{13F3C442-3D44-40AF-9E0F-99DC35A26F45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreManager.Web", "StoreManager.Web\StoreManager.Web.csproj", "{13F3C442-3D44-40AF-9E0F-99DC35A26F45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{267D29E0-F443-4639-B978-2C558F631685}"
 EndProject

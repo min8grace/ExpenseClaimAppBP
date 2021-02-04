@@ -1,5 +1,6 @@
 ﻿using StoreManager.Domain.Entities.Expense;
 using System;
+using System.Collections.Generic;
 
 namespace StoreManager.Application.Features.Claims.Queries.GetById
 {
@@ -17,5 +18,6 @@ namespace StoreManager.Application.Features.Claims.Queries.GetById
         public string RequesterComments { get; set; }
         public string ApproverComments { get; set; }
         public string FinanceComments { get; set; }
+        public virtual ICollection<LineItem> LineItems { get; set; }
     }
 }

@@ -16,17 +16,17 @@ namespace StoreManager.Application.Features.Claims.Queries.GetById
             private readonly IClaimRepository _claim;
             private readonly IMapper _mapper;
 
-            public GetProductByIdQueryHandler(IClaimRepository product, IMapper mapper)
+            public GetProductByIdQueryHandler(IClaimRepository claim, IMapper mapper)
             {
-                _claim = product;
+                _claim = claim;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetClaimByIdResponse>> Handle(GetClaimByIdQuery query, CancellationToken cancellationToken)
             {
-                var product = await _claim.GetByIdAsync(query.Id);
-                var mappedProduct = _mapper.Map<GetClaimByIdResponse>(product);
-                return Result<GetClaimByIdResponse>.Success(mappedProduct);
+                var claim = await _claim.GetByIdAsync(query.Id);
+                var mappedClaim = _mapper.Map<GetClaimByIdResponse>(claim);
+                return Result<GetClaimByIdResponse>.Success(mappedClaim);
             }
         }
     }

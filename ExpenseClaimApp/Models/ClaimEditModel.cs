@@ -1,6 +1,7 @@
 ﻿using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -29,5 +30,8 @@ namespace ExpenseClaimApp.Models
         public string RequesterComments { get; set; }
         public string ApproverComments { get; set; }
         public string FinanceComments { get; set; }
+
+        [ValidateComplexType]
+        public virtual ICollection<LineItem> LineItems { get; set; } = new Collection<LineItem>();
     }
 }

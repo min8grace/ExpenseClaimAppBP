@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GlobalUse.Components\GlobalUse.Components.csproj" />
     <ProjectReference Include="..\StoreManager.Application\StoreManager.Application.csproj" />
     <ProjectReference Include="..\StoreManager.Domain\StoreManager.Domain.csproj" />
   </ItemGroup>

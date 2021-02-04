@@ -27,6 +27,11 @@ namespace StoreManager.Api.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        //public async Task<ActionResult<GetClaimByIdResponse>> GetById(int id)
+        //{
+        //    var claim = (_mediator.Send(new GetClaimByIdQuery() { Id = id })).Result.Data;
+        //    return Ok(claim);
+        //}
         public IActionResult GetById(int id)
         {
             var claim = (_mediator.Send(new GetClaimByIdQuery() { Id = id })).Result.Data;

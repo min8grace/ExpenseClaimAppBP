@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreManager.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseClaimApp", "ExpenseClaimApp\ExpenseClaimApp.csproj", "{B002EFCF-F520-41F9-AE3B-5856CB9EC339}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalUse.Components", "GlobalUse.Components\GlobalUse.Components.csproj", "{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{B002EFCF-F520-41F9-AE3B-5856CB9EC339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B002EFCF-F520-41F9-AE3B-5856CB9EC339}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B002EFCF-F520-41F9-AE3B-5856CB9EC339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{2CB63A3A-822A-4B65-BD31-5950BF741D32} = {C7AA309A-117E-4B05-82DD-CFF73A83EC3C}
 		{7E62A300-1001-4F7D-9E25-C3CE55BFFBBF} = {C7AA309A-117E-4B05-82DD-CFF73A83EC3C}
 		{B002EFCF-F520-41F9-AE3B-5856CB9EC339} = {AC43F2DB-E92D-4116-A637-85443C7A270A}
+		{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A} = {AC43F2DB-E92D-4116-A637-85443C7A270A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B792FBC-B8C2-415D-8EAE-05D242D43842}

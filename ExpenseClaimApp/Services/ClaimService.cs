@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using StoreManager.Application.Features.Claims.Commands.Update;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
+using StoreManager.Application.Features.Claims.Queries.GetById;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,12 @@ namespace ExpenseClaimApp.Services
 
         public async Task<Claim> GetClaimById(int id)
         {
-            return await JsonSerializer.DeserializeAsync<Claim>
-                (await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var result = await JsonSerializer.DeserializeAsync<GetClaimByIdResponse>
+            (await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            Claim claim = mapper.Map<Claim>(result);
+            return claim;
+            //return await JsonSerializer.DeserializeAsync<Claim>
+            //    (await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
         public async Task<Claim> CreateClaim(Claim newClaim)

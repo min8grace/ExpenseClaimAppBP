@@ -32,7 +32,10 @@ namespace StoreManager.Infrastructure.Repositories
 
         public async Task<Claim> GetByIdAsync(int claimId)
         {
-            return await _repository.Entities.Where(p => p.Id == claimId).FirstOrDefaultAsync();
+            //return await _repository.Entities.Where(p => p.Id == claimId).FirstOrDefaultAsync();
+            var result = await _repository.Entities.Include(c => c.LineItems)
+                .FirstOrDefaultAsync(c => c.Id == claimId); ;
+            return result;
         }
 
         public async Task<List<Claim>> GetListAsync()

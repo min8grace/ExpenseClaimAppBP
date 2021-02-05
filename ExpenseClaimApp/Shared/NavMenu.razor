@@ -7,41 +7,50 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
+
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ins/category">
-                <span class="oi oi-info" aria-hidden="true"></span> Category
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ins/currency">
-                <span class="oi oi-dollar" aria-hidden="true"></span> Currency
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ins/claim">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Claim
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ins/lineItem">
-                <span class="oi oi-heart" aria-hidden="true"></span> LineItem
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
             <NavLink class="nav-link" href="/list" Match="NavLinkMatch.All">
-                <span class="oi oi-file" aria-hidden="true"></span> List
+                <span class="oi oi-list" aria-hidden="true"></span> Expense Claim List
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="/edit" Match="NavLinkMatch.All">
-                <span class="oi oi-file" aria-hidden="true"></span> Create
+                <span class="oi oi-pencil" aria-hidden="true"></span> Create
             </NavLink>
         </li>
+
+        <li class="nav-item px-3">
+            <span  class="oi" aria-hidden="false"> </span>
+        </li>
+
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ins/category">
+                <span class="oi oi-info" aria-hidden="true"></span> [Admin] Category
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ins/currency">
+                <span class="oi oi-dollar" aria-hidden="true"></span> [Admin] Currency
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ins/claim">
+                <span class="oi oi-check" aria-hidden="true"></span> [Admin] Claim
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ins/lineItem">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> [Admin] LineItem
+            </NavLink>
+        </li>
+
+
     </ul>
 </div>
 

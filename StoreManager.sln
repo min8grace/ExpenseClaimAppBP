@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreManager.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseClaimApp", "ExpenseClaimApp\ExpenseClaimApp.csproj", "{B002EFCF-F520-41F9-AE3B-5856CB9EC339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalUse.Components", "GlobalUse.Components\GlobalUse.Components.csproj", "{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalUse.Components", "GlobalUse.Components\GlobalUse.Components.csproj", "{9701B8D4-9CB9-42CB-ABF5-DCAC854A4C4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

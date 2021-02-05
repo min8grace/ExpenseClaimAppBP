@@ -17,7 +17,7 @@ namespace ExpenseClaimApp.Pages.Inspection
         [Inject]
         public IMapper Mapper { get; set; }
 
-        public List<GetAllCategoriesResponse> Categories { get; set; } //= new List<GetAllCategoriesResponse>();
+        public List<GetAllCategoriesResponse> Categories { get; set; } = new List<GetAllCategoriesResponse>();
         public int Id { get; set; }
         public StoreManager.Domain.Entities.Expense.Category Category { get; set; } = new StoreManager.Domain.Entities.Expense.Category();
         public CategoryEditModel CategoryEditModel { get; set; } = new CategoryEditModel();
@@ -26,16 +26,21 @@ namespace ExpenseClaimApp.Pages.Inspection
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+
+        protected bool CreateEditMode { get; set; } = false;
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            CreateEditMode = false;
+            CategoryEditModel = new CategoryEditModel();
             Categories = (await CategoryService.GetCategories()).ToList();
-
         }
-        protected async Task Select_Click(int InputId, int b)
+        protected async Task Edit_Click(int InputId, int b)
         {
+            CreateEditMode = true;
             Category = await CategoryService.GetCategoryById(InputId);
             Mapper.Map(Category, CategoryEditModel);
         }
@@ -46,25 +51,15 @@ namespace ExpenseClaimApp.Pages.Inspection
         }
         protected async Task Create_Click()
         {
-            Mapper.Map(CategoryEditModel, Category);
-
-            StoreManager.Domain.Entities.Expense.Category result = null;
-            result = await CategoryService.CreateCategory(Category);
-            if (result != null)
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong Creating the new employee. Please try again.";
-                Saved = false;
-            }
-            NavigationManager.NavigateTo("/ins/Category", true);
+            CreateEditMode = true;
+            CategoryEditModel = new CategoryEditModel();
         }
 
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(CategoryEditModel, Category);
 
-            StoreManager.Domain.Entities.Expense.Category result = null;
-            if (Category.Id != 0)
+            if (Category.Id != 0) //Edit
             {
                 await CategoryService.UpdateCategory(Category);
                 StatusClass = "alert-success";
@@ -74,13 +69,18 @@ namespace ExpenseClaimApp.Pages.Inspection
                 NavigationManager.NavigateTo("/ins/Category", true);
 
             }
-            else
+            else //Create
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the new employee. Please try again.";
-                Saved = false;
+                StoreManager.Domain.Entities.Expense.Category result = null;
+                result = await CategoryService.CreateCategory(Category);
+                if (result != null)
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
+                NavigationManager.NavigateTo("/ins/Category", true);
             }
-
         }
     }
 }

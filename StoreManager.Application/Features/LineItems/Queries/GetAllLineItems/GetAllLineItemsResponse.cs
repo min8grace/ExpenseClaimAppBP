@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreManager.Domain.Entities.Expense;
+using System;
 
 namespace StoreManager.Application.Features.LineItems.Queries.GetAllLineItems
 {
@@ -17,5 +18,8 @@ namespace StoreManager.Application.Features.LineItems.Queries.GetAllLineItems
 
         public byte[] Receipt { get; set; }//image
 
+        //public virtual Claim Claim { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual Currency Currency { get; set; }
     }
 }

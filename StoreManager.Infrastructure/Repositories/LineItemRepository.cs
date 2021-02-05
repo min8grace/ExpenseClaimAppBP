@@ -31,12 +31,16 @@ namespace StoreManager.Infrastructure.Repositories
 
         public async Task<LineItem> GetByIdAsync(int lineItemId)
         {
-            return await _repository.Entities.Where(p => p.Id == lineItemId).FirstOrDefaultAsync();
+            return await _repository.Entities.Where(p => p.Id == lineItemId)
+                .Include(x => x.Currency)
+                .Include(x => x.Category).FirstOrDefaultAsync();
         }
 
         public async Task<List<LineItem>> GetListAsync()
         {
-            return await _repository.Entities.ToListAsync();
+            return await _repository.Entities
+                .Include(x=>x.Currency)
+                .Include(x => x.Category).ToListAsync();
         }
 
         public async Task<int> InsertAsync(LineItem lineItem)

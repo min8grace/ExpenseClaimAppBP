@@ -13,6 +13,6 @@ namespace StoreManager.Domain.Entities.Expense
         public string Name { get; set; }
         public string Symbol { get; set; }
 
-        public ICollection<LineItem> LineItems { get; set; }
+       //public ICollection<LineItem> LineItems { get; set; }
     }
 }

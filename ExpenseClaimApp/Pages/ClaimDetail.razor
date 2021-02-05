@@ -11,8 +11,8 @@ else
 {
 
     <h1>ClaimDetail</h1>
+
     <div>
-        <h4> Claim </h4>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
@@ -84,10 +84,14 @@ else
         </dl>
 
     </div>
+
+    <hr class="rounded">
+
+
     @if (Claim.LineItems != null)
     {
         <h3>
-            Registered Line Items in the Claim
+            Items in the Claim
         </h3>
         <table class="table">
             <tr>

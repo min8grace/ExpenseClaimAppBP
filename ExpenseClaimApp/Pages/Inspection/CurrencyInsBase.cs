@@ -26,16 +26,20 @@ namespace ExpenseClaimApp.Pages.Inspection
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+        protected bool CreateEditMode { get; set; } = false;
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            CreateEditMode = false;
+            CurrencyEditModel = new CurrencyEditModel();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
-
         }
-        protected async Task Select_Click(int InputId, int b)
+        protected async Task Edit_Click(int InputId, int b)
         {
+            CreateEditMode = true;
             Currency = await CurrencyService.GetCurrencyById(InputId);
             Mapper.Map(Currency, CurrencyEditModel);
         }
@@ -46,25 +50,16 @@ namespace ExpenseClaimApp.Pages.Inspection
         }
         protected async Task Create_Click()
         {
-            Mapper.Map(CurrencyEditModel, Currency);
+            CreateEditMode = true;
+            CurrencyEditModel = new CurrencyEditModel();
 
-            StoreManager.Domain.Entities.Expense.Currency result = null;
-            result = await CurrencyService.CreateCurrency(Currency);
-            if (result != null)
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong Creating the new employee. Please try again.";
-                Saved = false;
-            }
-            NavigationManager.NavigateTo("/ins/Currency", true);
         }
 
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(CurrencyEditModel, Currency);
 
-            StoreManager.Domain.Entities.Expense.Currency result = null;
-            if (Currency.Id != 0)
+            if (Currency.Id != 0)//Edit
             {
                 await CurrencyService.UpdateCurrency(Currency);
                 StatusClass = "alert-success";
@@ -74,11 +69,17 @@ namespace ExpenseClaimApp.Pages.Inspection
                 NavigationManager.NavigateTo("/ins/Currency", true);
 
             }
-            else
+            else//Create
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the new employee. Please try again.";
-                Saved = false;
+                StoreManager.Domain.Entities.Expense.Currency result = null;
+                result = await CurrencyService.CreateCurrency(Currency);
+                if (result != null)
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
+                NavigationManager.NavigateTo("/ins/Currency", true);
             }
 
         }

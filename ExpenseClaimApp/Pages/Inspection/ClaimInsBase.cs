@@ -46,11 +46,16 @@ namespace ExpenseClaimApp.Pages.Inspection
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+
+        protected bool CreateEditMode { get; set; } = false;
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            CreateEditMode = false;
+            ClaimEditModel = new ClaimEditModel();
             Claims = (await ClaimService.GetClaims()).ToList();
 
             //Categories = (await CategoryService.GetCategories()).ToList();
@@ -59,8 +64,9 @@ namespace ExpenseClaimApp.Pages.Inspection
             //CurrencyId = Claim.CurrencyId.ToString();
 
         }
-        protected async Task Select_Click(int InputId, int b)
+        protected async Task Edit_Click(int InputId, int b)
         {
+            CreateEditMode = true;
             Claim = await ClaimService.GetClaimById(InputId);
             Mapper.Map(Claim, ClaimEditModel);
             RequesterComments = Claim.RequesterComments;
@@ -74,25 +80,16 @@ namespace ExpenseClaimApp.Pages.Inspection
         }
         protected async Task Create_Click()
         {
-            Mapper.Map(ClaimEditModel, Claim);
+            CreateEditMode = true;
+            ClaimEditModel = new ClaimEditModel();
 
-            StoreManager.Domain.Entities.Expense.Claim result = null;
-            result = await ClaimService.CreateClaim(Claim);
-            if (result != null)
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong Creating the new employee. Please try again.";
-                Saved = false;
-            }
-            NavigationManager.NavigateTo("/ins/Claim", true);
         }
 
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(ClaimEditModel, Claim);
-
-            StoreManager.Domain.Entities.Expense.Claim result = null;
-            if (Claim.Id != 0)
+            
+            if (Claim.Id != 0) //Edit
             {
                 Claim.RequesterComments = RequesterComments;
                 Claim.ApproverComments = ApproverComments;
@@ -105,13 +102,18 @@ namespace ExpenseClaimApp.Pages.Inspection
                 NavigationManager.NavigateTo("/ins/Claim", true);
 
             }
-            else
+            else//Create
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the new employee. Please try again.";
-                Saved = false;
+                StoreManager.Domain.Entities.Expense.Claim result = null;
+                result = await ClaimService.CreateClaim(Claim);
+                if (result != null)
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
+                NavigationManager.NavigateTo("/ins/Claim", true);
             }
-
         }
     }
 }

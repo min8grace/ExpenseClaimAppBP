@@ -1,84 +1,103 @@
 ﻿@page  "/ins/Category"
 @inherits CategoryInsBase
 
+<div>
+    <button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button>
+</div>
+
 <EditForm Model="@CategoryEditModel" OnValidSubmit="HandleValidSubmit">
     <ValidationSummary></ValidationSummary>
-    <fieldset disabled>
+
+
+    @if (CreateEditMode == true)
+    {
+        <hr class="rounded">
+        <fieldset disabled>
+            <div class="form-group row">
+                <label for="id" class="col-sm-2 col-form-label">
+                    ID
+                </label>
+                <div class="col-sm-10">
+                    <InputNumber id="id" class="form-control" placeholder="Id" style="width:800px" @bind-Value="CategoryEditModel.Id" />
+                    <ValidationMessage For="@(()=> CategoryEditModel.Id)" />
+                </div>
+            </div>
+        </fieldset>
         <div class="form-group row">
-            <label for="id" class="col-sm-2 col-form-label">
-                ID
+            <label for="name" class="col-sm-2 col-form-label">
+                Name
             </label>
             <div class="col-sm-10">
-                <InputNumber id="id" class="form-control" placeholder="Id" style="width:800px" @bind-Value="CategoryEditModel.Id" />
-                <ValidationMessage For="@(()=> CategoryEditModel.Id)" />
+                <InputText id="name" class="form-control" placeholder="Name" style="width:800px" @bind-Value="CategoryEditModel.Name" />
+                <ValidationMessage For="@(()=> CategoryEditModel.Name)" />
             </div>
         </div>
-    </fieldset>
-    <div class="form-group row">
-        <label for="name" class="col-sm-2 col-form-label">
-            Name
-        </label>
-        <div class="col-sm-10">
-            <InputText id="name" class="form-control" placeholder="Name" style="width:800px" @bind-Value="CategoryEditModel.Name" />
-            <ValidationMessage For="@(()=> CategoryEditModel.Name)" />
-        </div>
-    </div>
 
-    <div class="form-group row">
-        <label for="code" class="col-sm-2 col-form-label">
-            Code
-        </label>
-        <div class="col-sm-10">
-            <InputText id="code" class="form-control" placeholder="Code" style="width:800px" @bind-Value="CategoryEditModel.Code" />
-            <ValidationMessage For="@(()=> CategoryEditModel.Code)" />
+        <div class="form-group row">
+            <label for="code" class="col-sm-2 col-form-label">
+                Code
+            </label>
+            <div class="col-sm-10">
+                <InputText id="code" class="form-control" placeholder="Code" style="width:800px" @bind-Value="CategoryEditModel.Code" />
+                <ValidationMessage For="@(()=> CategoryEditModel.Code)" />
+            </div>
         </div>
-    </div>
-    <button class="btn btn-primary" type="submit">Submit</button>
-    <button class="btn btn-primary" type="button" @onclick="Create_Click">Create</button>
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+    }
 
 </EditForm>
 
+<hr class="rounded">
 
-@if (Categories == null)
+@if (CreateEditMode == false)
 {
-    <div class="spinner"></div>
-
+    @if (Categories == null)
+    {
+        <div class="spinner"></div>
+    }
+    else
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Code</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Categories)
+                    {
+                        Id = item.Id;
+                        <tr>
+                            <td> @item.Id</td>
+                            <td> @item.Name</td>
+                            <td> @item.Code</td>
+                            <td>
+                                @*<a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>*@
+                                @*<a href="#" class="btn btn-primary m-0" value="@ClaimId" @onclick="Delete_Click">Delete</a>*@
+                                <button class="btn btn-primary" type="button" value="@Id" @onclick="@(x=> Edit_Click(@item.Id , Id))">
+                                    Edit
+                                </button>
+                                <button class="btn btn-primary" type="button" name="@Id" value="@Id" @onclick="@(x=> Delete_Click(@item.Id))">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 }
 else
 {
-    <div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Code</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Categories)
-                {
-                    Id = item.Id;
-                    <tr>
-                        <td> @item.Id</td>
-                        <td> @item.Name</td>
-                        <td> @item.Code</td>
-                        <td>
-                            @*<a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>*@
-                            @*<a href="#" class="btn btn-primary m-0" value="@ClaimId" @onclick="Delete_Click">Delete</a>*@
-                            <button class="btn btn-primary" type="button" value="@Id" @onclick="@(x=> Select_Click(@item.Id , Id))">
-                                Select
-                            </button>
-                            <button class="btn btn-primary" type="button" name="@Id" value="@Id" @onclick="@(x=> Delete_Click(@item.Id))">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-
-        </table>
-    </div>
+    <button class="btn btn-primary" type="button" @onclick="OnInitializedAsync">
+        Back to full List
+    </button>
 }
+
 

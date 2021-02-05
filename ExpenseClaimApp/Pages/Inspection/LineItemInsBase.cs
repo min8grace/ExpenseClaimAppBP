@@ -31,7 +31,6 @@ namespace ExpenseClaimApp.Pages.Inspection
 
         public List<GetAllCategoriesResponse> Categories { get; set; } = new List<GetAllCategoriesResponse>();
         public string CategoryId { get; set; }
-
         public List<GetAllCurrenciesResponse> Currencies { get; set; } = new List<GetAllCurrenciesResponse>();
         public string CurrencyId { get; set; }
 
@@ -46,6 +45,9 @@ namespace ExpenseClaimApp.Pages.Inspection
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+
+        protected bool CreateEditMode { get; set; } = false;
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
@@ -86,16 +88,23 @@ namespace ExpenseClaimApp.Pages.Inspection
 
         protected override async Task OnInitializedAsync()
         {
-            LineItems = (await LineItemService.GetLineItems()).ToList();
+            CreateEditMode = false;
+            LineItemEditModel = new LineItemEditModel();
 
+            LineItems = (await LineItemService.GetLineItems()).ToList();
             Categories = (await CategoryService.GetCategories()).ToList();
             CategoryId = LineItem.CategoryId.ToString();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
-            CurrencyId = LineItem.CurrencyId.ToString();  
+            CurrencyId = LineItem.CurrencyId.ToString();
+            //foreach (var item in LineItems)
+            //{
+            //    var x = Currencies.Where(x => x.Id == item.CurrencyId).Select(x => x.Name).FirstOrDefault();
+            //}
         }
 
-        protected async Task Select_Click(int InputId, int b)
+        protected async Task Edit_Click(int InputId, int b)
         {
+            CreateEditMode = true;
             LineItem = await LineItemService.GetLineItemById(InputId);
             Mapper.Map(LineItem, LineItemEditModel);
             Description = LineItem.Description;
@@ -107,24 +116,15 @@ namespace ExpenseClaimApp.Pages.Inspection
         }
         protected async Task Create_Click()
         {
-            Mapper.Map(LineItemEditModel, LineItem);
-
-            StoreManager.Domain.Entities.Expense.LineItem result = null;
-            result = await LineItemService.CreateLineItem(LineItem);
-            if (result != null)
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong Creating the new employee. Please try again.";
-                Saved = false;
-            }
-            NavigationManager.NavigateTo("/ins/LineItem", true);
+            CreateEditMode = true;
+            LineItemEditModel = new LineItemEditModel();
+            imageDataUrls = new List<string>();
         }
 
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(LineItemEditModel, LineItem);
-
-            StoreManager.Domain.Entities.Expense.LineItem result = null;
+            
             if (LineItem.Id != 0)
             {
                 LineItem.Receipt = xByte;
@@ -139,11 +139,16 @@ namespace ExpenseClaimApp.Pages.Inspection
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the new employee. Please try again.";
-                Saved = false;
+                StoreManager.Domain.Entities.Expense.LineItem result = null;
+                result = await LineItemService.CreateLineItem(LineItem);
+                if (result != null)
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
+                NavigationManager.NavigateTo("/ins/LineItem", true);
             }
-
         }
     }
 }

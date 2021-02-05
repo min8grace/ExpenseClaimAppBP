@@ -137,7 +137,7 @@ namespace ExpenseClaimApp.Pages.Inspection
                 NavigationManager.NavigateTo("/ins/LineItem", true);
 
             }
-            else
+            else//Create
             {
                 StoreManager.Domain.Entities.Expense.LineItem result = null;
                 result = await LineItemService.CreateLineItem(LineItem);

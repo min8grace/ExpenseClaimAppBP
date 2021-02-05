@@ -26,6 +26,14 @@ namespace ExpenseClaimApp.Pages
         //{
         //    DeleteConfirmation.Show();
         //}
+        protected async Task Create_Click()
+        {
+            NavigationManager.NavigateTo("/edit", true);
+            //CreateEditMode = true;
+            //CategoryEditModel = new CategoryEditModel();
+        }
+
+
         protected async Task Delete_Click()
         {
             await ClaimService.DeleteClaim(ClaimId);
@@ -44,5 +52,7 @@ namespace ExpenseClaimApp.Pages
         {
             Claims = (await ClaimService.GetClaims()).ToList();
         }
+
+
     }
 }

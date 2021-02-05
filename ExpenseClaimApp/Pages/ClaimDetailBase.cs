@@ -19,11 +19,17 @@ namespace ExpenseClaimApp.Pages
 
         [Parameter]
         public string Id { get; set; }
-
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
         protected override async Task OnInitializedAsync()
         {
             Id = Id ?? "1";
             Claim = await ClaimService.GetClaimById(int.Parse(Id));
+        }
+
+        protected async Task BackToList()
+        {
+            NavigationManager.NavigateTo("/list", true);
         }
     }
 }

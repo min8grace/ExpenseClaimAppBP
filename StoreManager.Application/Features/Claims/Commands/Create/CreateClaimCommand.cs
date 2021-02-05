@@ -41,10 +41,10 @@ namespace StoreManager.Application.Features.Claims.Commands.Create
 
         public async Task<Result<int>> Handle(CreateClaimCommand request, CancellationToken cancellationToken)
         {
-            var product = _mapper.Map<Claim>(request);
-            await _claimRepository.InsertAsync(product);
+            var claim = _mapper.Map<Claim>(request);
+            await _claimRepository.InsertAsync(claim);
             await _unitOfWork.Commit(cancellationToken);
-            return Result<int>.Success(product.Id);
+            return Result<int>.Success(claim.Id);
         }
     }
 }

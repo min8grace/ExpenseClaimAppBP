@@ -6,9 +6,12 @@
 
 <EditForm Model="@ClaimEditModel" OnValidSubmit="HandleValidSubmit">
     <ObjectGraphDataAnnotationsValidator />
-
     <ValidationSummary />
-    <h3>Edit Claim</h3>
+    @if (ClaimEditModel.Id != 0)
+    {<h3>Edit Claim</h3>}
+    else
+    {<h3>Create Claim</h3>}
+
     <hr />
     <div class="form-group row">
         <label for="title" class="col-sm-2 col-form-label">
@@ -116,72 +119,129 @@
             Count : @FinanceComments.Length
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Submit</button>
+
 
     <hr class="rounded">
 
-    @if (ClaimEditModel.LineItems != null)
+    @if (ClaimEditModel.LineItems != null) // Create
     {
         <h3>
-            Registered Line Items in the Claim
+            Line Items
+            @if (ClaimEditModel.Id == 0)
+            {<button class="btn btn-outline-primary" type="button" @onclick="AddList_Click">Add</button>}
         </h3>
         <table class="table">
             <tr>
-                <th>Id</th>
-                <th>ClaimId</th>
-                <th>CategoryId</th>
+                <th>Category</th>
                 <th>Payee</th>
                 <th>Date</th>
-                <th>Description</th>
                 <th>Amount</th>
-                <th>CurrencyCode</th>
-                <th>USDAmount</th>
-                <th>         </th>
+                <th>Description</th>
+                <th>Currency</th>
+                <th>USD</th>
+                <th></th>
             </tr>
-            @foreach (var item in ClaimEditModel.LineItems)
+
+            @if (ClaimEditModel.Id == 0)
             {
-                <tr>
-                    <td>
-                        @item.Id
-                    </td>
-                    <td>
-                        @item.ClaimId
-                    </td>
-                    <td>
-                        @item.CategoryId
-                    </td>
-                    <td>
-                        @item.Payee
-                    </td>
-                    <td>
-                        @item.Date
-                    </td>
-                    <td>
-                        @item.Description
-                    </td>
-                    <td>
-                        @item.Amount
-                    </td>
-                    <td>
-                        @item.CurrencyId
-                    </td>
-                    <td>
-                        @item.USDAmount
-                    </td>
-                    <td>
-                        <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
-                        <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                        <a href="/" class="btn btn-primary m-0">Delete</a>
-                        @*<a href="#" class="btn btn-primary m-0" value="@item.ClaimId" @onclick="Delete_Click">Delete</a>*@
-                        @*<button class="btn btn-danger" type="button" value="@ClaimId" @onclick="Delete_Click">Delete</button>*@
-                    </td>
-                </tr>
+                @foreach (var item in LineItemEditModels)// Adding LineItems
+                {
+                    <tr>
+                        <td>
+                            <InputSelect id="category" @bind-Value="item.CategoryId" class="form-control" style="width:150px">
+                                @foreach (var cart in Categories)
+                                            {
+                                    <option value="@cart.Id"> @cart.Name</option>
+                                            }
+                            </InputSelect>
+                            <ValidationMessage For="@(()=> LineItemEditModel.CategoryId)" />
+                        </td>
+                        <td>
+                            <InputText id="title" class="form-control" placeholder="Payee" style=" width:100px" @bind-Value="item.Payee" />
+                            <ValidationMessage For="@(()=> LineItemEditModel.Payee)" />
+                        </td>
+                        <td>
+                            <InputDate id="title" class="form-control" placeholder="Date" style=" width:120px" @bind-Value="item.Date" />
+                            <ValidationMessage For="@(()=> LineItemEditModel.Date)" />
+                        </td>
+                        <td>
+                            <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" />
+                            <ValidationMessage For="@(()=> LineItemEditModel.Amount)" />
+                        </td>
+
+                        <td>
+                            <InputText id="title" class="form-control" placeholder="Description" style="width:350px" @bind-Value="item.Description" />
+                            <ValidationMessage For="@(()=> LineItemEditModel.Description)" />
+                        </td>
+                        <td>
+                            <InputSelect id="category" @bind-Value="item.CurrencyId" class="form-control" style="width:80px">
+                                @foreach (var curr in Currencies)
+                                            {
+                                    <option value="@curr.Id"> @curr.Name</option>
+                                            }
+                            </InputSelect>
+                            <ValidationMessage For="@(()=> LineItemEditModel.CurrencyId)" />
+                        </td>
+                        <td>
+                            <InputNumber id="title" class="form-control" placeholder="USD" style="width:120px" @bind-Value="item.USDAmount" />
+                        </td>
+                        <td>
+                            <button class="btn-xs btn-outline-primary" type="button" style="width:30px" @onclick="@(x=>Delete_Lineitem(@item))">
+                                X
+                            </button>
+                        </td>
+                    </tr>
+                }
             }
+            else //Only in case lineitems exist
+            {
+
+                @foreach (var item in ClaimEditModel.LineItems)
+                {
+                    <tr>
+                        <td>
+                            @item.Category.Name
+                        </td>
+                        <td>
+                            @item.Payee
+                        </td>
+                        <td>
+                            @item.Date
+                        </td>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td>
+                            @item.Amount
+                        </td>
+                        <td>
+                            @item.Currency.Name
+                        </td>
+                        <td>
+                            @item.USDAmount
+                        </td>
+                        <td>
+                            <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                            <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            <a href="/" class="btn btn-primary m-0">Delete</a>
+                            @*<a href="#" class="btn btn-primary m-0" value="@item.ClaimId" @onclick="Delete_Click">Delete</a>*@
+                            @*<button class="btn btn-danger" type="button" value="@ClaimId" @onclick="Delete_Click">Delete</button>*@
+                        </td>
+                    </tr>
+                }
+
+            }
+
         </table>
+
     }
-
-
+    <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
 
+<button class="btn btn-outline-primary" type="button" @onclick="BackToList">
+    Back to full List
+</button>
+
+<hr class="rounded">
 

@@ -21,7 +21,8 @@ namespace StoreManager.Infrastructure.Repositories
 
         public async Task<int> Commit(CancellationToken cancellationToken)
         {
-            return await _dbContext.SaveChangesAsync(cancellationToken);
+            var result = await _dbContext.SaveChangesAsync(cancellationToken);
+            return result;
         }
 
         public Task Rollback()

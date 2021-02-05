@@ -32,8 +32,10 @@ namespace ExpenseClaimApp.Services
 
         public async Task<Claim> GetClaimById(int id)
         {
-            var result = await JsonSerializer.DeserializeAsync<GetClaimByIdResponse>
-            (await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var IOStream = await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{id}");
+            var jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            var result = await JsonSerializer.DeserializeAsync<GetClaimByIdResponse>(IOStream, jsonSerializerOptions);
+
             Claim claim = mapper.Map<Claim>(result);
             return claim;
             //return await JsonSerializer.DeserializeAsync<Claim>
@@ -45,11 +47,14 @@ namespace ExpenseClaimApp.Services
             var claimJson =
                 new StringContent(JsonSerializer.Serialize(newClaim), Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync($"api/v{apiversion}/Claim", claimJson);
+            HttpResponseMessage response = await httpClient.PostAsync($"api/v{apiversion}/Claim", claimJson);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<Claim>(await response.Content.ReadAsStreamAsync());
+                var jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+                var IOStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<Claim>(IOStream, jsonSerializerOptions);
+                return result;
             }
             return null;
         }

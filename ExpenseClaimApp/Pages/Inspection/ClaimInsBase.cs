@@ -104,8 +104,12 @@ namespace ExpenseClaimApp.Pages.Inspection
             }
             else//Create
             {
-                StoreManager.Domain.Entities.Expense.Claim result = null;
-                result = await ClaimService.CreateClaim(Claim);
+                Claim.RequesterComments = RequesterComments;
+                Claim.ApproverComments = ApproverComments;
+                Claim.FinanceComments = FinanceComments;
+
+                Claim result = await ClaimService.CreateClaim(Claim);
+
                 if (result != null)
                 {
                     StatusClass = "alert-danger";

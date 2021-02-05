@@ -33,8 +33,12 @@ namespace StoreManager.Infrastructure.Repositories
         public async Task<Claim> GetByIdAsync(int claimId)
         {
             //return await _repository.Entities.Where(p => p.Id == claimId).FirstOrDefaultAsync();
-            var result = await _repository.Entities.Include(c => c.LineItems)
-                .FirstOrDefaultAsync(c => c.Id == claimId); ;
+            var result = await _repository.Entities.Where(c => c.Id == claimId)
+                .Include(c => c.LineItems)
+                    .ThenInclude(c => c.Category)
+                .Include(c => c.LineItems)
+                    .ThenInclude(c => c.Currency)
+                .FirstOrDefaultAsync();
             return result;
         }
 
@@ -46,7 +50,7 @@ namespace StoreManager.Infrastructure.Repositories
         public async Task<int> InsertAsync(Claim claim)
         {
             await _repository.AddAsync(claim);
-            await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.ListKey);
+            //await _distributedCache.RemoveAsync(CacheKeys.ClaimCacheKeys.ListKey);
             return claim.Id;
         }
 

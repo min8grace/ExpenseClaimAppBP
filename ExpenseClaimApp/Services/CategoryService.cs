@@ -25,6 +25,7 @@ namespace ExpenseClaimApp.Services
 
         public async Task<List<GetAllCategoriesResponse>> GetCategories()
         {
+            await AddBearerToken();
             return await JsonSerializer.DeserializeAsync<List<GetAllCategoriesResponse>>
              (await httpClient.GetStreamAsync($"api/v{apiversion}/Category"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }

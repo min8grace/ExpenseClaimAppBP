@@ -9,28 +9,34 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
+using ExpenseClaimApp.Services.Base;
 
 namespace ExpenseClaimApp.Services
 {
-    public class CategoryService : ICategoryService
+    public class CategoryService : BaseDataService, ICategoryService
     {
         private readonly HttpClient httpClient;
         private readonly IMapper mapper;
-        public CategoryService(HttpClient httpClient, IMapper mapper)
+        protected readonly ILocalStorageService localStorage;
+        public CategoryService(HttpClient httpClient, ILocalStorageService localStorage, IMapper mapper) : base (httpClient,localStorage)
         {
             this.httpClient = httpClient;
             this.mapper = mapper;
+            this.localStorage = localStorage;
         }
         private const int apiversion = 1;
 
         public async Task<List<GetAllCategoriesResponse>> GetCategories()
         {
+            await AddBearerToken();
             return await JsonSerializer.DeserializeAsync<List<GetAllCategoriesResponse>>
              (await httpClient.GetStreamAsync($"api/v{apiversion}/Category"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
         public async Task<Category> GetCategoryById(int id)
         {
+            await AddBearerToken();
             return await JsonSerializer.DeserializeAsync<Category>
                 (await httpClient.GetStreamAsync($"api/v{apiversion}/Category/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }

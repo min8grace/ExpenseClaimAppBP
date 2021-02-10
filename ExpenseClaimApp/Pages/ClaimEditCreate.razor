@@ -1,7 +1,7 @@
 ﻿@page "/edit/{Id}"
 @page "/edit"
 @inherits ClaimEditCreateBase
-
+@attribute [Authorize]
 
 
 <EditForm Model="@ClaimEditModel" OnValidSubmit="HandleValidSubmit">

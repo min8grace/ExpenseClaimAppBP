@@ -32,10 +32,12 @@ namespace StoreManager.Api.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {
             var origin = Request.Headers["origin"];
-            return Ok(await _identityService.RegisterAsync(request, origin));
+            var result = await _identityService.RegisterAsync(request, origin);
+            return Ok(result);
         }
 
         [HttpGet("confirm-email")]

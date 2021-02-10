@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using StoreManager.Domain.Entities.Expense;
 using System;
+using StoreManager.Application.Exceptions;
 
 namespace StoreManager.Application.Features.Claims.Commands.Update
 {
@@ -37,6 +38,11 @@ namespace StoreManager.Application.Features.Claims.Commands.Update
             public async Task<Result<int>> Handle(UpdateClaimCommand command, CancellationToken cancellationToken)
             {
                 var claim = await _claimRepository.GetByIdAsync(command.Id);
+
+                if (claim == null)
+                {
+                    throw new NotFoundException(nameof(claim), command.Id);
+                }
 
                 if (claim == null)
                 {

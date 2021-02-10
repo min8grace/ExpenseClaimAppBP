@@ -1,5 +1,6 @@
 ﻿@page "/list"
 @inherits ClaimListBase
+@attribute [Authorize]
 
 <div>
     <h2>Expense Claim List <button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button></h2>

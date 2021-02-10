@@ -1,6 +1,6 @@
 ﻿@page "/lineitem/edit/{Id}"
 @page "/lineitem/edit"
-
+@attribute [Authorize]
 @inherits LineItemEditBase
 
 <EditForm Model="@LineItemEditModel" OnValidSubmit="HandleValidSubmit">

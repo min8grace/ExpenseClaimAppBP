@@ -1,6 +1,6 @@
 ﻿@page "/lineitem/detail/{Id}"
 @inherits LineItemDetailBase
-
+@attribute [Authorize]
 
 @if (LineItem == null)
 {

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ExpenseClaimApp.Auth;
+using ExpenseClaimApp.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +22,16 @@ namespace ExpenseClaimApp.Pages
 
         protected async override Task OnInitializedAsync()
         {
-            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+            //var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+            //var user = authenticationState.User;
+            //if (authenticationState.User.Identity.IsAuthenticated)
+            //{
+
+            //}
         }
 
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationState { get; set; }
         protected void NavigateToLogin()
         {
             NavigationManager.NavigateTo("login");
@@ -34,7 +44,7 @@ namespace ExpenseClaimApp.Pages
 
         protected async void Logout()
         {
-            await AuthenticationService.Logout();
+           await AuthenticationService.Logout();
         }
     }
 }

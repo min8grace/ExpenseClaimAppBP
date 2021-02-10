@@ -1,6 +1,6 @@
 ﻿@page "/detail/{Id}"
 @inherits ClaimDetailBase
-
+@attribute [Authorize]
 
 @if (Claim == null || Claim.LineItems == null)
 {

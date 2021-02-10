@@ -2,30 +2,35 @@
 
 
 <div class="container-fluid">
-    <h1>Expense Claim </h1>
-    <p>TAs you have learned in other tutorials, it is important to lay out your application design before you begin building. Start with the workflow component. The workflow helps you identify the tasks needed to complete the workflow goal. After you have identified the workflow tasks, think about the forms you need and the users that use the forms. Do you need to edit content on a form? Is the form better-suited as a read-only interface? What data sources do you need to both retrieve data and store data? Finally, do you need reports? What kind of reports do you need and what format is best for displaying reporting content?</p>
+    <AuthorizeView>
+        <Authorized>
+            <h1>Expense Claim </h1>
+            <p>As you have learned in other tutorials, it is important to lay out your application design before you begin building. Start with the workflow component. The workflow helps you identify the tasks needed to complete the workflow goal. After you have identified the workflow tasks, think about the forms you need and the users that use the forms. Do you need to edit content on a form? Is the form better-suited as a read-only interface? What data sources do you need to both retrieve data and store data? Finally, do you need reports? What kind of reports do you need and what format is best for displaying reporting content?</p>
 
-    <h3>Workflow </h3>
-    <p>An effective method for laying out the workflow is to create it in a flowchart format. The image below displays the Expense Claim Workflow as a swim-lane flowchart. Notice the four lanes. Each lane represents the user or system responsible for the task.</p>
+            <h3>Workflow </h3>
+            <p>An effective method for laying out the workflow is to create it in a flowchart format. The image below displays the Expense Claim Workflow as a swim-lane flowchart. Notice the four lanes. Each lane represents the user or system responsible for the task.</p>
+            <ol>
+                <li>Any user in the organization can submit a new expense claim for approval and processing. The form originator selects the expense claim approver from a limited pool of users.</li>
+                <li>The expense claim approver reviews the claim, then decides whether approve, reject, or query the claim. If the approver approves the claim, the workflow moves to the finance processing user task. If the approver rejects the claim, the originator receives a notice and the workflow ends. If the approver queries the claim, the workflow routes the claim back to the originator for rework.</li>
+                <li>If the originator receives a claim for rework, they can either modify and resubmit the claim or cancel the claim. This query-resubmit loop can repeat itself as many times as necessary until the approver or originator chooses another action (such as approved, rejected, or canceled).</li>
+                <li>If the approver approves the claim, the workflow continues to the finance processing step. The recipients for this step are a group of users defined in SharePoint. The finance processing group can process the claim or they can reject the claim.</li>
+                <li>Throughout the workflow, K2 updates the status of the claim so that you know where your claim is in the process. K2 also sends email notifications when the claim is either approved, rejected, or processed.</li>
+            </ol>
+            <button @onclick="Logout">Logout</button>
+        </Authorized>
+        <NotAuthorized>
 
-    <ol>
-        <li>Any user in the organization can submit a new expense claim for approval and processing. The form originator selects the expense claim approver from a limited pool of users.</li>
-        <li>The expense claim approver reviews the claim, then decides whether approve, reject, or query the claim. If the approver approves the claim, the workflow moves to the finance processing user task. If the approver rejects the claim, the originator receives a notice and the workflow ends. If the approver queries the claim, the workflow routes the claim back to the originator for rework.</li>
-        <li>If the originator receives a claim for rework, they can either modify and resubmit the claim or cancel the claim. This query-resubmit loop can repeat itself as many times as necessary until the approver or originator chooses another action (such as approved, rejected, or canceled).</li>
-        <li>If the approver approves the claim, the workflow continues to the finance processing step. The recipients for this step are a group of users defined in SharePoint. The finance processing group can process the claim or they can reject the claim.</li>
-        <li>Throughout the workflow, K2 updates the status of the claim so that you know where your claim is in the process. K2 also sends email notifications when the claim is either approved, rejected, or processed.</li>
-    </ol>
+            <h1 class="page-title">Welcome to the Expense Claim Management System!</h1>
+            <br />
+            <h1>You are not authorized  </h1>
 
-
+            <br />
+            <button @onclick="NavigateToLogin">Click here to log in</button>
+            <br />
+            <button @onclick="NavigateToRegister">Click here to register</button>
+        </NotAuthorized>
+        <Authorizing>
+            <h1>Authorizing....  </h1>
+        </Authorizing>
+    </AuthorizeView>
 </div>
-
-<AuthorizeView>
-    <Authorized>
-        <button @onclick="Logout">Logout</button>
-    </Authorized>
-    <NotAuthorized>
-        <button @onclick="NavigateToLogin">Click here to log in</button>
-        <br />
-        <button @onclick="NavigateToRegister">Click here to register</button>
-    </NotAuthorized>
-</AuthorizeView>

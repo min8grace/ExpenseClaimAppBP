@@ -117,7 +117,12 @@
                     @foreach (var imageDataUrl in imageDataUrls)
                     {
                         <img class="rounded m-1" src="@imageDataUrl" />
+                        <button class="btn btn-primary" type="button" @onclick="@(x => Delete_Img_Click(@imageDataUrl))">
+                            x
+                        </button>
+
                     }
+                    <span>@Message</span>
                 </div>
             </div>
         </div>

@@ -21,6 +21,8 @@ namespace StoreManager.Application.Features.LineItems.Commands.Create
         public Decimal Amount { get; set; }
         public int CurrencyId { get; set; }
         public Decimal USDAmount { get; set; }
+        public byte[] Receipt { get; set; }
+
     }
 
     public class CreateLineItemCommandHandler : IRequestHandler<CreateLineItemCommand, Result<int>>

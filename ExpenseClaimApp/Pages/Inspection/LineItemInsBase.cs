@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExpenseClaimApp.Extensions;
 using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
@@ -55,34 +56,29 @@ namespace ExpenseClaimApp.Pages.Inspection
 
 
         protected IList<string> imageDataUrls = new List<string>();
-        protected byte[] xByte ;
         protected ImageConverter _imageConverter;// = new ImageConverter();
         protected async Task OnInputFileChange(InputFileChangeEventArgs e)
         {
-            var maxAllowedFiles = 3;
-            var format = "image/png";
 
+            var maxAllowedFiles = 1;
+            var format = "image/png";
+            if (e.GetMultipleFiles(maxAllowedFiles).Count > maxAllowedFiles)
+              { Message = "max Allowed Files are 5"; return; }
             foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
             {
                 var resizedImageFile = await imageFile.RequestImageFileAsync(format, 100, 100);
 
-
                 var buffer = new byte[resizedImageFile.Size];
                 await resizedImageFile.OpenReadStream().ReadAsync(buffer);
-                var imageDataUrl =
-                    $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-
+                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+                if(imageDataUrl != null)
+                {
+                    imageDataUrls.Clear();
                     imageDataUrls.Add(imageDataUrl);
-                 
-                LineItemEditModel.Receipt = (byte[])_imageConverter.ConvertTo(resizedImageFile, typeof(byte[]));              
+                }                    
+                LineItemEditModel.Receipt = buffer;
+                //var image = resizedImageFile.OptimizeImageSize(700, 700);
             }
-
-            //if (Request.Form.Files.Count > 0)
-            //{
-            //    IFormFile file = Request.Form.Files.FirstOrDefault();
-            //    var image = file.OptimizeImageSize(700, 700);
-            //    await _mediator.Send(new UpdateProductImageCommand() { Id = id, Image = image });
-            //}
         }
 
 
@@ -96,18 +92,28 @@ namespace ExpenseClaimApp.Pages.Inspection
             CategoryId = LineItem.CategoryId.ToString();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
             CurrencyId = LineItem.CurrencyId.ToString();
-            //foreach (var item in LineItems)
-            //{
-            //    var x = Currencies.Where(x => x.Id == item.CurrencyId).Select(x => x.Name).FirstOrDefault();
-            //}
         }
-
+        
+        protected  void Delete_Img_Click(string imageDataUrl)
+        {
+            imageDataUrls.Remove(imageDataUrl);
+            LineItemEditModel.Receipt = null;
+        }
         protected async Task Edit_Click(int InputId, int b)
         {
             CreateEditMode = true;
             LineItem = await LineItemService.GetLineItemById(InputId);
             Mapper.Map(LineItem, LineItemEditModel);
             Description = LineItem.Description;
+            // image
+
+            if (LineItem.Receipt.Length > 0)
+            {
+                var format = "image/png";
+                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
+                imageDataUrls.Add(imageDataUrl);
+            }
+
         }
         protected async Task Delete_Click(int InputId)
         {
@@ -127,7 +133,6 @@ namespace ExpenseClaimApp.Pages.Inspection
             
             if (LineItem.Id != 0)
             {
-                LineItem.Receipt = xByte;
                 LineItem.Description = Description;
                 await LineItemService.UpdateLineItem(LineItem);
                 StatusClass = "alert-success";
@@ -135,19 +140,17 @@ namespace ExpenseClaimApp.Pages.Inspection
                 Saved = true;
                 //StateHasChanged();
                 NavigationManager.NavigateTo("/ins/LineItem", true);
-
             }
             else//Create
             {
                 StoreManager.Domain.Entities.Expense.LineItem result = null;
                 result = await LineItemService.CreateLineItem(LineItem);
-                if (result != null)
+                if (result == null)
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong Creating the new employee. Please try again.";
                     Saved = false;
-                }
-                NavigationManager.NavigateTo("/ins/LineItem", true);
+                }else NavigationManager.NavigateTo("/ins/LineItem", true);
             }
         }
     }

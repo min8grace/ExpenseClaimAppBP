@@ -2,11 +2,13 @@
 using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using StoreManager.Application.Features.Categories.Queries.GetAllCategories;
 using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,9 +33,13 @@ namespace ExpenseClaimApp.Pages.LineItems
         public List<GetAllCurrenciesResponse> Currencies { get; set; } = new List<GetAllCurrenciesResponse>();
         public string CurrencyId { get; set; }
 
-
         public string Description { get; set; } = string.Empty;
 
+        protected string Message = string.Empty;
+        protected string StatusClass = string.Empty;
+        protected bool Saved;
+        protected IList<string> imageDataUrls = new List<string>();
+        protected ImageConverter _imageConverter;// = new ImageConverter();
         [Inject]
         public IMapper Mapper { get; set; }
 
@@ -69,21 +75,69 @@ namespace ExpenseClaimApp.Pages.LineItems
             CategoryId = LineItem.CategoryId.ToString();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
             CurrencyId = LineItem.CurrencyId.ToString();
+
+            if (LineItem.Receipt.Length > 0 ) {
+                var format = "image/png";
+                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
+                imageDataUrls.Add(imageDataUrl);
+            }
+
+        }
+
+        protected async Task OnInputFileChange(InputFileChangeEventArgs e)
+        {
+            var maxAllowedFiles = 1;
+            var format = "image/png";
+            if (e.GetMultipleFiles(maxAllowedFiles).Count > maxAllowedFiles)
+            { Message = "max Allowed Files are 5"; return; }
+            foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
+            {
+                var resizedImageFile = await imageFile.RequestImageFileAsync(format, 100, 100);
+
+                var buffer = new byte[resizedImageFile.Size];
+                await resizedImageFile.OpenReadStream().ReadAsync(buffer);
+                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+                if (imageDataUrl != null)
+                {
+                    imageDataUrls.Clear();
+                    imageDataUrls.Add(imageDataUrl);
+                }
+                LineItemEditModel.Receipt = buffer;
+                //var image = resizedImageFile.OptimizeImageSize(700, 700);
+            }
+        }
+
+        protected void Delete_Img_Click(string imageDataUrl)
+        {
+            imageDataUrls.Remove(imageDataUrl);
+            LineItemEditModel.Receipt = null;
         }
 
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(LineItemEditModel, LineItem);
-
             LineItem result = null;
+
             if (LineItem.Id != 0)
             {
+                LineItem.Description = Description;
+                await LineItemService.UpdateLineItem(LineItem);
+                StatusClass = "alert-success";
+                Message = "Employee updated successfully.";
+                Saved = true;
+                //StateHasChanged();
                 NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
             }
             else
             {
                 result = await LineItemService.CreateLineItem(LineItem);
-                if (result != null) NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
+                if (result == null)
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
+                else NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
             }
 
 

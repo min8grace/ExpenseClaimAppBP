@@ -38,8 +38,6 @@ namespace ExpenseClaimApp.Services
             {
                 TokenRequest authenticationRequest = new TokenRequest() { Email = email, Password = password };
                 //var authenticationResponse = await httpClient.AuthenticateAsync(authenticationRequest);
-
-
                 var RequestJson =
                 new StringContent(JsonSerializer.Serialize(authenticationRequest), Encoding.UTF8, "application/json");
 
@@ -48,13 +46,15 @@ namespace ExpenseClaimApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-                    var IOStream = await response.Content.ReadAsStreamAsync();
-                    TokenResponse authenticationResponse = await JsonSerializer.DeserializeAsync<TokenResponse>(IOStream, jsonSerializerOptions);
-                    if (authenticationResponse.JWToken != string.Empty)
+                    var IOStream = await response.Content.ReadAsStreamAsync();                    
+                    var authenticationResponse = await JsonSerializer.DeserializeAsync<Result<TokenResponse>>(IOStream, jsonSerializerOptions);
+                    TokenResponse tokenResponse = authenticationResponse.Data;
+
+                    if (tokenResponse.JWToken != string.Empty)
                     {
-                        await localStorage.SetItemAsync("token", authenticationResponse.JWToken);
+                        await localStorage.SetItemAsync("token", tokenResponse.JWToken);
                         ((CustomAuthenticationStateProvider)authenticationStateProvider).SetUserAuthenticated(email);
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authenticationResponse.JWToken);
+                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenResponse.JWToken);
                         return true;
                     }
                 } 

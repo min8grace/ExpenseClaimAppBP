@@ -40,17 +40,17 @@ namespace StoreManager.Api.Controllers.v1
             if (command == null)
                 return BadRequest();
 
-            ////VAlidation
-            //if (command. == string.Empty || command.LastName == string.Empty)
-            //{
-            //    ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
-            //}
+            //VAlidation
+            if (command.ClaimId == 0 || command.Payee == string.Empty)
+            {
+                ModelState.AddModelError("ClaimId/Payee", "The ClaimId or Payee shouldn't be empty");
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var createdLineItem = await _mediator.Send(command);
-
+            if(command.Receipt.Length > 0 && createdLineItem !=null) await _mediator.Send(new UpdateLineItemImageCommand() { Id = createdLineItem.Data, Receipt = command.Receipt });
             return Created("lineItem", createdLineItem);
         }
 
@@ -70,12 +70,12 @@ namespace StoreManager.Api.Controllers.v1
                 return BadRequest(ModelState);
 
             var lineItemToUpdate = (_mediator.Send(new GetLineItemByIdQuery() { Id = id })).Result.Data;
-
+           
             if (lineItemToUpdate == null)
                 return NotFound();
 
             await _mediator.Send(command);
-
+            await _mediator.Send(new UpdateLineItemImageCommand() { Id = command.Id, Receipt = command.Receipt });
             return NoContent();
         }
 

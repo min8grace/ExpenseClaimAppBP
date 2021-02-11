@@ -20,7 +20,7 @@ namespace StoreManager.Application.Features.LineItems.Commands.Update
         public Decimal Amount { get; set; }
         public int CurrencyId { get; set; }
         public Decimal USDAmount { get; set; }
-
+        public byte[] Receipt { get; set; }
         public class UpdateLineItemCommandHandler : IRequestHandler<UpdateLineItemCommand, Result<int>>
         {
             private readonly IUnitOfWork _unitOfWork;

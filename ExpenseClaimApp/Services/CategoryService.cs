@@ -29,14 +29,14 @@ namespace ExpenseClaimApp.Services
 
         public async Task<List<GetAllCategoriesResponse>> GetCategories()
         {
-            await AddBearerToken();
+            //await AddBearerToken();
             return await JsonSerializer.DeserializeAsync<List<GetAllCategoriesResponse>>
              (await httpClient.GetStreamAsync($"api/v{apiversion}/Category"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
         public async Task<Category> GetCategoryById(int id)
         {
-            await AddBearerToken();
+            //await AddBearerToken();
             return await JsonSerializer.DeserializeAsync<Category>
                 (await httpClient.GetStreamAsync($"api/v{apiversion}/Category/{id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }

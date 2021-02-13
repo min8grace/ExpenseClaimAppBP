@@ -67,5 +67,12 @@ namespace StoreManager.Application.Constants
             public const string Edit = "Permissions.Finance.Edit";
             public const string Delete = "Permissions.Finance.Delete";
         }
+        public static class Claim
+        {
+            public const string View = "Permissions.Claim.View";
+            public const string Create = "Permissions.Claim.Create";
+            public const string Edit = "Permissions.Claim.Edit";
+            public const string Delete = "Permissions.Claim.Delete";
+        }
     }
 }

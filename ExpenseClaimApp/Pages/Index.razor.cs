@@ -11,8 +11,9 @@ namespace ExpenseClaimApp.Pages
 {
     public partial class Index
     {
-        [Inject]
-        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationState { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -22,6 +23,7 @@ namespace ExpenseClaimApp.Pages
 
         protected async override Task OnInitializedAsync()
         {
+            //await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
             //var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
             //var user = authenticationState.User;
             //if (authenticationState.User.Identity.IsAuthenticated)
@@ -30,8 +32,6 @@ namespace ExpenseClaimApp.Pages
             //}
         }
 
-        [CascadingParameter]
-        private Task<AuthenticationState> authenticationState { get; set; }
         protected void NavigateToLogin()
         {
             NavigationManager.NavigateTo("login");

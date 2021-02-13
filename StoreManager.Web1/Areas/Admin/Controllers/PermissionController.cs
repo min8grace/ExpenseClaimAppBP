@@ -33,6 +33,9 @@ namespace StoreManager.Web.Areas.Admin.Controllers
             allPermissions.GetPermissions(typeof(Permissions.Dashboard), roleId);
             allPermissions.GetPermissions(typeof(Permissions.Products), roleId);
             allPermissions.GetPermissions(typeof(Permissions.Users), roleId);
+            allPermissions.GetPermissions(typeof(Permissions.Approved), roleId);
+            allPermissions.GetPermissions(typeof(Permissions.Finance), roleId);
+            allPermissions.GetPermissions(typeof(Permissions.Claim), roleId);
             var role = await _roleManager.FindByIdAsync(roleId);
             model.RoleId = roleId;
             var claims = await _roleManager.GetClaimsAsync(role);

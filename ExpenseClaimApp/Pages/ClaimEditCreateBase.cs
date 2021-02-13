@@ -27,7 +27,7 @@ namespace ExpenseClaimApp.Pages
         public string RequesterComments { get; set; } = string.Empty;
         public string ApproverComments { get; set; } = string.Empty;
         public string FinanceComments { get; set; } = string.Empty;
-
+        public decimal TotalAmount  { get; set; } 
         [Inject]
         public ICategoryService CategoryService { get; set; }
         [Inject]
@@ -82,6 +82,15 @@ namespace ExpenseClaimApp.Pages
                     Status = (Status)Enum.Parse(typeof(Status), "Requested")
                 };
             }          
+
+            if(LineItemEditModels.Count() > 0)
+            {
+                ClaimEditModel.TotalAmount = 0;
+                foreach (var i in LineItemEditModels) 
+                {
+                    ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount + i.USDAmount;
+                }
+            }
         }
 
         protected async Task HandleValidSubmit()
@@ -144,5 +153,17 @@ namespace ExpenseClaimApp.Pages
             //NavigationManager.NavigateTo("/list", true);
             
         }
+        protected async Task eventAmt(decimal amt)
+        {
+            TotalAmount = TotalAmount + amt;
+
+            //ClaimEditModel.TotalAmount = 0;
+            //foreach (var i in LineItemEditModels)
+            //{
+            //    ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount + i.USDAmount;
+            //}
+
+        }
+        
     }
 }

@@ -20,6 +20,7 @@ namespace ExpenseClaimApp
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddBlazoredLocalStorage();
+
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             //builder.Services.AddScoped<AuthenticationStateProvider, DummyAuthenticationStateProvider>();

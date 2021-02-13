@@ -7,8 +7,8 @@ namespace StoreManager.Application.Features.Claims.Queries.GetAllClaims
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public int Requester { get; set; }
-        public int Approver { get; set; }
+        public string Requester { get; set; }
+        public string Approver { get; set; }
         public DateTime SubmitDate { get; set; }
         public DateTime ApprovalDate { get; set; }
         public DateTime ProcessedDate { get; set; }

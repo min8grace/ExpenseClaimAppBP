@@ -19,6 +19,7 @@ namespace ExpenseClaimApp.Models
 
         public Decimal Amount { get; set; } //= 300.5m;
         public int CurrencyId { get; set; }
+        [Required]
         public Decimal USDAmount { get; set; } //= 300.5m;
 
         public byte[] Receipt { get; set; }//image

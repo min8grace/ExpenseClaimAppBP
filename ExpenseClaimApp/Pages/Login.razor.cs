@@ -1,6 +1,8 @@
-﻿using ExpenseClaimApp.Models;
+﻿using ExpenseClaimApp.Auth;
+using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,9 @@ namespace ExpenseClaimApp.Pages
     public partial class Login
     {
         public LoginViewModel LoginViewModel { get; set; }
+
+        [Inject]
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -33,6 +38,7 @@ namespace ExpenseClaimApp.Pages
         {
             if (await AuthenticationService.Authenticate(LoginViewModel.Email, LoginViewModel.Password))
             {
+                await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
                 NavigationManager.NavigateTo("/");
             }
             Message = "Username/password combination unknown";

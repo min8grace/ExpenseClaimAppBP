@@ -1,0 +1,38 @@
+﻿@page "/Finance/{id}"
+@inherits FinanceClaimBase
+
+
+<h2>Finance Process</h2>
+
+<EditForm Model="@ClaimEditModel" OnValidSubmit="HandleValidSubmit">
+    <ValidationSummary></ValidationSummary>
+    <div class="form-group row">
+        <label for="status" class="col-sm-2 col-form-label">
+            Select Action
+        </label>
+        <div class="col-sm-4">
+            <InputSelect id="status" class="form-control" placeholder="Status" style="width:400px" @bind-Value="SelectedStatus">
+                @foreach (var status in Enum.GetValues(typeof(ExpenseClaimApp.Pages.Processes.FinanceClaimBase.StatusFinance)))
+                {
+                    <option value="@status"> @status</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="col-sm-1">
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Approver" class="col-sm-2 col-form-label">
+            Task Comments
+        </label>
+        <div class="col-sm-10">
+            <InputText id="Approver" class="form-control" placeholder="Task Comments" style="width:800px" @bind-Value="FinanceComments" />
+        </div>
+    </div>
+
+</EditForm>
+<hr />
+<DisplayClaimDetail Id="Id" Claim="Claim"> </DisplayClaimDetail>
+
+<hr />

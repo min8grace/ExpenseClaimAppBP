@@ -4,7 +4,7 @@
 @attribute [Authorize]
 
 
-<EditForm Model="@ClaimEditModel" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="@ClaimEditModel" OnValidSubmit="HandleValidSubmit" >
     <ObjectGraphDataAnnotationsValidator />
     <ValidationSummary />
     @if (ClaimEditModel.Id != 0)
@@ -27,7 +27,7 @@
             Requester
         </label>
         <div class="col-sm-10">
-            <InputNumber id="requester" class="form-control" placeholder="Requester" style="width:800px" @bind-Value="ClaimEditModel.Requester" />
+            <InputText id="requester" class="form-control" placeholder="Requester" style="width:800px" @bind-Value="ClaimEditModel.Requester" />
         </div>
     </div>
     <div class="form-group row">
@@ -35,7 +35,7 @@
             Approver
         </label>
         <div class="col-sm-10">
-            <InputNumber id="Approver" class="form-control" placeholder="Approver" style="width:800px" @bind-Value="ClaimEditModel.Approver" />
+            <InputText id="Approver" class="form-control" placeholder="Approver" style="width:800px" @bind-Value="ClaimEditModel.Approver" />
         </div>
     </div>
     <div class="form-group row">
@@ -62,14 +62,16 @@
             <InputDate id="processedDate" class="form-control" placeholder="Processed Date" style="width:500px" @bind-Value="ClaimEditModel.ProcessedDate" />
         </div>
     </div>
-    <div class="form-group row">
-        <label for="totalAmount" class="col-sm-2 col-form-label">
-            Total Amount
-        </label>
-        <div class="col-sm-10">
-            <InputNumber id="totalAmount" class="form-control" placeholder="Total Amount" style="width:800px" @bind-Value="ClaimEditModel.TotalAmount" />
+    <fieldset disabled>
+        <div class="form-group row">
+            <label for="totalAmount" class="col-sm-2 col-form-label">
+                Total Amount
+            </label>
+            <div class="col-sm-10">
+                <InputNumber id="totalAmount" class="form-control" placeholder="Total Amount" style="width:800px" @bind-Value="ClaimEditModel.TotalAmount" />
+            </div>
         </div>
-    </div>
+    </fieldset>
     <div class="form-group row">
         <label for="status" class="col-sm-2 col-form-label">
             Status
@@ -79,7 +81,6 @@
                 @foreach (var status in Enum.GetValues(typeof(StoreManager.Domain.Entities.Expense.Status)))
                 {
                     <option value="@status"> @status</option>}
-
             </InputSelect>
         </div>
     </div>
@@ -183,15 +184,19 @@
                             <ValidationMessage For="@(()=> LineItemEditModel.CurrencyId)" />
                         </td>
                         <td>
-                            <InputNumber id="title" class="form-control" placeholder="USD" style="width:120px" @bind-Value="item.USDAmount" />
+                           
+                            <InputNumber id="title" class="form-control" placeholder="USD" style="width:120px" @bind-Value="item.USDAmount"  />
+                            @*@onchange="@(x=> { ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount  + int.Parse(x.Value.ToString()); })" />*@
                         </td>
                         <td>
                             <button class="btn-xs btn-outline-primary" type="button" style="width:30px" @onclick="@(x=>Delete_Lineitem(@item))">
                                 X
                             </button>
                         </td>
+
                     </tr>
                 }
+                @TotalAmount
             }
             else //Only in case lineitems exist
             {

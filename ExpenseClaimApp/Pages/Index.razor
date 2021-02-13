@@ -2,6 +2,16 @@
 
 
 <div class="container-fluid">
+    <AuthorizeView Roles="Admin, SuperAdmin">
+        <p>Displayed if the logged in user is in Admin, SuperAdmin role</p>
+    </AuthorizeView>
+    <AuthorizeView Roles="Finance">
+        <p>Displayed if the logged in user is in Finance role</p>
+    </AuthorizeView>
+    <AuthorizeView Roles="Basic">
+        <p>Displayed if the logged in user is in Basic role</p>
+    </AuthorizeView>
+
     <AuthorizeView>
         <Authorized>
             <h1>Expense Claim </h1>

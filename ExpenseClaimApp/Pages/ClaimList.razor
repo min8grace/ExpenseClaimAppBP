@@ -2,19 +2,27 @@
 @inherits ClaimListBase
 @attribute [Authorize]
 
-<div>
-    <h2>Expense Claim List <button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button></h2>
-    
-</div>
+<AuthorizeView>
+    <Authorized>
+        <h6 class="mb-4">Hello, @Name</h6>
+    </Authorized>
+</AuthorizeView>
 
+@if (Role == "Admin" || Role == "Basic")
+{
+    <div>
+        <h2>Expense Claim List <button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button></h2>
+    </div>
+}
 
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">#</th>
+            <th scope="col">Claim No.</th>
             <th scope="col">Title</th>
             <th scope="col">SubmitDate</th>
-            <th scope="col">TotalAmount</th>
+            <th scope="col">Total</th>
+            <th scope="col">Status</th>
         </tr>
     </thead>
     <tbody>
@@ -22,7 +30,7 @@
 
         @if (Claims == null)
         {
-            <tr>
+            <tr>        
                 <th scope="row"> </th>
                 <td> NO DATA </td>
             </tr>
@@ -30,25 +38,38 @@
         else
         {
             int cnt = 0;
-            int id = 0;
             @foreach (var item in Claims)
             {
                 cnt++;
                 ClaimId = item.Id;
                 <tr>
-                    <th scope="row">@cnt</th>
+                    <td> @item.Id</td>
                     <td> @item.Title</td>
                     <td> @item.SubmitDate</td>
                     <td> @item.TotalAmount</td>
+                    <td> @item.Status</td>
                     <td>
-                        <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
-                        <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                        @if (Role == "Admin" || Role == "Basic")
+                        {
+                            <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                            <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            <button class="btn btn-primary" type="button" value="@ClaimId" @onclick="Delete_Click">
+                                Delete
+                            </button>
+                        }
+                        else if (Role == "Approver")
+                        {
+                            <a href="@($"/Approver/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                        }
+                        else if (Role == "Finance")
+                        {
+                            <a href="@($"/Finance/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                        }
+                        else
+                        { <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>}
 
-                        @*<a href="#" class="btn btn-primary m-0" value="@ClaimId" @onclick="Delete_Click">Delete</a>*@
-                        <button class="btn btn-primary" type="button" value="@ClaimId" @onclick="Delete_Click">
-                            Delete
-                        </button>
                     </td>
+
                 </tr>
             }
         }
@@ -57,5 +78,24 @@
 
 </table>
 
+
 @*<ConfirmBase @ref="DeleteConfirmation" ConfirmationChanged="ConfirmDelete_Click">
-</ConfirmBase>*@
+    </ConfirmBase>*@
+@*@foreach (var claim in AuthenticationStateUser.Claims)
+    {
+        <tr>
+            <td>@claim.Type</td>
+            <td>@claim.Value</td>
+        </tr>
+    }*@
+
+
+@*<h6 class="mb-4">Hello, @context.User.Identity.Name</h6>*@
+@*<h1 class="mb-4">Authentication State</h1>
+    <h2 class="mb-4">Hello, @AuthenticationStateUser.Identity.Name!</h2>*@
+
+@*//http://www.mattruma.com/adventures-with-blazor-accessing-claims-in-a-razor-page/
+    <h1 class="mb-4">Authentication State</h1>
+        <h2 class="mb-4">Hello, @AuthenticationStateUser.Identity.Name!</h2>
+        <h1 class="mb-4">Authentication State Provider</h1>
+        <h2 class="mb-4">Hello, @AuthenticationStateProviderUser.Identity.Name!</h2>*@

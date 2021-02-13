@@ -16,8 +16,8 @@ namespace ExpenseClaimApp.Models
         [Required(ErrorMessage = "Custom Validation : Title must be provided")]
         [MinLength(5)]
         public string Title { get; set; }
-        public int Requester { get; set; }
-        public int Approver { get; set; }
+        public string Requester { get; set; }
+        public string Approver { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime SubmitDate { get; set; }

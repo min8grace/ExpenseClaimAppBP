@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -12,12 +14,12 @@ namespace ExpenseClaimApp.Auth
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorage)
+        private readonly HttpClient _httpClient;
+        public CustomAuthenticationStateProvider(HttpClient httpClient, ILocalStorageService localStorage)
         {
+            _httpClient = httpClient;
             _localStorage = localStorage;
         }
-
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var savedToken = await _localStorage.GetItemAsync<string>("token");
@@ -26,6 +28,8 @@ namespace ExpenseClaimApp.Auth
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));//Anonymouse
             }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
 
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseTokenClaims(savedToken), "jwt")));
         }
@@ -51,7 +55,8 @@ namespace ExpenseClaimApp.Auth
             var jsonBytes = ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+            //keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+            keyValuePairs.TryGetValue("roles", out object roles);
 
             if (roles != null)
             {

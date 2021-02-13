@@ -25,8 +25,8 @@
                     </NavLink>
                 </li>
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="#" Match="NavLinkMatch.All" @onclick="Logout"> 
-                            <span class="oi oi-check" aria-hidden="true"></span> Logout
+                    <NavLink class="nav-link" href="#" Match="NavLinkMatch.All" @onclick="Logout">
+                        <span class="oi oi-check" aria-hidden="true"></span> Logout
                     </NavLink>
                 </li>
 
@@ -34,42 +34,51 @@
                     <span class="oi" aria-hidden="false"> </span>
                 </li>
 
-
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="ins/category">
-                        <span class="oi oi-info" aria-hidden="true"></span> [Admin] Category
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="ins/currency">
-                        <span class="oi oi-dollar" aria-hidden="true"></span> [Admin] Currency
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="ins/claim">
-                        <span class="oi oi-pencil" aria-hidden="true"></span> [Admin] Claim
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="ins/lineItem">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> [Admin] LineItem
-                    </NavLink>
-                </li>
-
-
+                @if (Role == "Admin" || Role == "SuperAdmin")
+                {
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="ins/category">
+                            <span class="oi oi-info" aria-hidden="true"></span> [Admin] Category
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="ins/currency">
+                            <span class="oi oi-dollar" aria-hidden="true"></span> [Admin] Currency
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="ins/claim">
+                            <span class="oi oi-pencil" aria-hidden="true"></span> [Admin] Claim
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="ins/lineItem">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> [Admin] LineItem
+                        </NavLink>
+                    </li>
+                }
             </Authorized>
             <NotAuthorized>
 
             </NotAuthorized>
         </AuthorizeView>
-
-
-
-
     </ul>
 </div>
 
+
+@using ExpenseClaimApp.Auth;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Authorization;   
+@using System.Threading.Tasks;
+
+
 @code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
     [Inject]
     public IAuthenticationService AuthenticationService { get; set; }
@@ -78,6 +87,7 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private string Role { get; set; }
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -86,4 +96,29 @@
     {
         await AuthenticationService.Logout();
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+        var AuthenticationStateUser = authenticationState.User;
+
+
+        if (authenticationState.User.IsInRole("Admin"))
+        {
+            Role = "Admin";
+        }
+        else if (authenticationState.User.IsInRole("Finance"))
+        {
+            Role = "Finance";
+        }
+        else if (authenticationState.User.IsInRole("Approver"))
+        {
+            Role = "Approver";
+        }
+        else if (authenticationState.User.IsInRole("Basic"))
+        {
+            Role = "Basic";
+        }
+    }
+
 }

@@ -59,7 +59,6 @@ namespace ExpenseClaimApp.Pages.Inspection
         protected ImageConverter _imageConverter;// = new ImageConverter();
         protected async Task OnInputFileChange(InputFileChangeEventArgs e)
         {
-
             var maxAllowedFiles = 1;
             var format = "image/png";
             if (e.GetMultipleFiles(maxAllowedFiles).Count > maxAllowedFiles)

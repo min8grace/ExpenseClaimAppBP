@@ -8,12 +8,15 @@
     </Authorized>
 </AuthorizeView>
 
-@if (Role == "Admin" || Role == "Basic")
-{
-    <div>
-        <h2>Expense Claim List <button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button></h2>
-    </div>
-}
+
+<div>
+    <h2>
+        Expense Claim List
+        @if (Role == "Admin" || Role == "Basic")
+        {<button class="btn btn-outline-primary" type="button" @onclick="Create_Click">Create new</button>}
+    </h2>
+</div>
+
 
 <table class="table">
     <thead>
@@ -51,8 +54,7 @@
                     <td>
                         @if (Role == "Basic")
                         {
-                            if (item.Status == StoreManager.Domain.Entities.Expense.Status.Finished) { }
-                            else if (item.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
+                            if (item.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
                                 item.Status == StoreManager.Domain.Entities.Expense.Status.Queried ||
                                 item.Status == StoreManager.Domain.Entities.Expense.Status.RejectedByFinance ||
                                 item.Status == StoreManager.Domain.Entities.Expense.Status.Saved)

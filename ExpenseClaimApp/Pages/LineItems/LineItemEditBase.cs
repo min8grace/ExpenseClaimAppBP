@@ -126,7 +126,7 @@ namespace ExpenseClaimApp.Pages.LineItems
                 Message = "Employee updated successfully.";
                 Saved = true;
                 //StateHasChanged();
-                NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
+                NavigationManager.NavigateTo($"/edit/{LineItem.ClaimId}", true);
             }
             else
             {
@@ -144,7 +144,7 @@ namespace ExpenseClaimApp.Pages.LineItems
         }
         protected async Task BackToList()
         {
-            NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
+            NavigationManager.NavigateTo($"/edit/{LineItem.ClaimId}", true);
         }
     }
 }

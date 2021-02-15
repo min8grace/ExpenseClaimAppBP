@@ -30,7 +30,7 @@ namespace ExpenseClaimApp.Pages
         protected string RequesterComments { get; set; } = "N/A";
         protected string ApproverComments { get; set; } = "N/A";
         protected string FinanceComments { get; set; } = "N/A";
-        protected decimal TotalAmount  { get; set; }
+
         [Inject]
         public ICategoryService CategoryService { get; set; }
         [Inject]
@@ -102,19 +102,12 @@ namespace ExpenseClaimApp.Pages
                 ClaimEditModel = new ClaimEditModel
                 {
                     Requester = Name,
-                    SubmitDate = DateTime.Now,
+                    SubmitDate = DateTime.Now,                    
                     Status = (Status)Enum.Parse(typeof(Status), "Requested")
                 };
             }          
 
-            if(LineItemEditModels.Count() > 0)
-            {
-                ClaimEditModel.TotalAmount = 0;
-                foreach (var i in LineItemEditModels) 
-                {
-                    ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount + i.USDAmount;
-                }
-            }
+
         }
 
         protected async Task HandleValidSubmit()
@@ -126,7 +119,6 @@ namespace ExpenseClaimApp.Pages
             Claim.SubmitDate = DateTime.Now;
             Claim.Requester = Name;//Id(email)
             Claim.Status = Status.Requested;
-            Claim.TotalAmount = Sum();
             if (Claim.Id != 0)//Edit-Submit
             {
                 await ClaimService.UpdateClaim(Claim);
@@ -164,7 +156,6 @@ namespace ExpenseClaimApp.Pages
             Claim.RequesterComments = RequesterComments;
             Claim.ApproverComments = ApproverComments;
             Claim.FinanceComments = FinanceComments;
-            Claim.TotalAmount = Sum();
             if (Claim.Id != 0)//Edit-Save
             {                
                 await ClaimService.UpdateClaim(Claim);
@@ -201,6 +192,7 @@ namespace ExpenseClaimApp.Pages
         {
             LineItemEditModel = new LineItemEditModel();
             LineItemEditModel.Date = DateTime.Now;
+            LineItemEditModel.CurrencyId = 7;//USD
             LineItemEditModels.Add(LineItemEditModel);
             //NavigationManager.NavigateTo("/edit", true);
             //CreateEditMode = true;
@@ -213,29 +205,17 @@ namespace ExpenseClaimApp.Pages
         protected async Task Delete_Lineitem(LineItemEditModel item)
         {
             LineItemEditModels.Remove(item);
+            ClaimEditModel.TotalAmount = LineItemEditModels.Select(x => x.USDAmount).Sum(x => x);
             //NavigationManager.NavigateTo("/list", true);
-            
-        }
-        protected async Task eventAmt(decimal amt)
-        {
-            TotalAmount = TotalAmount + amt;
-
-            //ClaimEditModel.TotalAmount = 0;
-            //foreach (var i in LineItemEditModels)
-            //{
-            //    ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount + i.USDAmount;
-            //}
 
         }
-
-        protected decimal Sum()
+        protected async Task EventAmt(int i, ChangeEventArgs e)
         {
-             decimal cnt =0; 
-            foreach (var item in LineItemEditModels)
-            {
-                cnt = cnt + item.USDAmount;
-            }
-            return cnt;
-        }        
+            var value = 0;
+            if (Int32.TryParse(e.Value.ToString(), out int auxn)) value = auxn;
+            LineItemEditModels[i].USDAmount = value;
+            ClaimEditModel.TotalAmount = LineItemEditModels.Select(x => x.USDAmount).Sum(x => x);
+            //StateHasChanged();
+        }      
     }
 }

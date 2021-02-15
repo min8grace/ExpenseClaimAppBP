@@ -142,5 +142,9 @@ namespace ExpenseClaimApp.Pages.LineItems
 
 
         }
+        protected async Task BackToList()
+        {
+            NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
+        }
     }
 }

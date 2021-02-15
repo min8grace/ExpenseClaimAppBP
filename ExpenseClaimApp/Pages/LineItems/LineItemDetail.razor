@@ -8,28 +8,23 @@
 }
 else
 {
-    <h3> LineItem Detail</h3>
-
-    <h5>
-        Claim #@LineItem.ClaimId
-    </h5>
+    <h3> Line-Item Detail</h3>
 
     <hr />
 
     <div>
-
         <dl class="row">
             <dt class="col-sm-2">
-                Claim Id
+                Claim No.
             </dt>
             <dd class="col-sm-10">
                 @LineItem.ClaimId
             </dd>
             <dt class="col-sm-2">
-                CategoryId
+                Category
             </dt>
             <dd class="col-sm-10">
-                @LineItem.CategoryId
+                @Category.Name
             </dd>
             <dt class="col-sm-2">
                 Payee
@@ -56,13 +51,13 @@ else
                 @LineItem.Amount
             </dd>
             <dt class="col-sm-2">
-                CurrencyCode
+                Currency
             </dt>
             <dd class="col-sm-10">
-                @LineItem.CurrencyId
+                @Currency.Name
             </dd>
             <dt class="col-sm-2">
-                USDAmount
+                USD Amount
             </dt>
             <dd class="col-sm-10">
                 @LineItem.USDAmount
@@ -71,7 +66,10 @@ else
     </div>
 }
 
-
+<button class="btn btn-outline-primary" type="button" @onclick="BackToList">
+    Back to full List
+</button>
+<hr />
 
 @*<table class="table">
         <tr>

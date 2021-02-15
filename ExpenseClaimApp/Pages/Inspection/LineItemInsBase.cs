@@ -114,9 +114,9 @@ namespace ExpenseClaimApp.Pages.Inspection
             }
 
         }
-        protected async Task Delete_Click(int InputId)
+        protected async Task Delete_Click(int SelectedId)
         {
-            await LineItemService.DeleteLineItem(InputId);
+            await LineItemService.DeleteLineItem(SelectedId);
             NavigationManager.NavigateTo("/ins/LineItem", true);
         }
         protected async Task Create_Click()

@@ -21,10 +21,17 @@ namespace ExpenseClaimApp
 
             builder.Services.AddBlazoredLocalStorage();
 
-            builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            //builder.Services.AddScoped<AuthenticationStateProvider, DummyAuthenticationStateProvider>();
+            builder.Services.AddAuthorizationCore(); //for AuthorizationPolicyProvider
+            builder.Services.AddScoped<CustomAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>(
+                provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
+
             //builder.Services.AddAuthentication("Identity.Application").AddCookie();
+
+            //var provider = new CustomAuthenticationStateProvider();
+            //builder.Services.AddSingleton(c => provider);
+            //builder.Services.AddSingleton<AuthenticationStateProvider>(c => provider);
+
 
             builder.Services.AddSingleton(new HttpClient
             {

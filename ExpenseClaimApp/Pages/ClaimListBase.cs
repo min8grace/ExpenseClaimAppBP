@@ -3,6 +3,7 @@ using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -52,12 +53,13 @@ namespace ExpenseClaimApp.Pages
         public string Role { get; set; }
         protected override async Task OnInitializedAsync()
         {
+
             var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
             var AuthenticationStateUser = authenticationState.User;
-            Name = AuthenticationStateUser.Identity.Name;
+            Name = AuthenticationStateUser.Claims.Where(x=>x.Type.Equals("email")).FirstOrDefault().Value;
             if (Name == null)
-            {
-                Name = (await authenticationStateTask).User.Identity.Name;
+            {   
+                Name = (await authenticationStateTask).User.Claims.Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
             }
 
             if (!authenticationState.User.Identity.IsAuthenticated)
@@ -68,7 +70,7 @@ namespace ExpenseClaimApp.Pages
 
             if (authenticationState.User.IsInRole("Admin"))
             {
-                Role= "Admin";
+                Role = "Admin";
                 Claims = (await ClaimService.GetClaims()).ToList();
             }
             else if (authenticationState.User.IsInRole("Finance"))
@@ -85,6 +87,12 @@ namespace ExpenseClaimApp.Pages
             {
                 Role = "Basic";
                 Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Requester.Equals(Name)).ToList();
+            }
+
+            foreach(var claim in AuthenticationStateUser.Claims)
+            {
+                Console.WriteLine(claim.Type);
+                Console.WriteLine(claim.Value);
             }
         }
     }

@@ -2,16 +2,6 @@
 
 
 <div class="container-fluid">
-    <AuthorizeView Roles="Admin, SuperAdmin">
-        <p>Displayed if the logged in user is in Admin, SuperAdmin role</p>
-    </AuthorizeView>
-    <AuthorizeView Roles="Finance">
-        <p>Displayed if the logged in user is in Finance role</p>
-    </AuthorizeView>
-    <AuthorizeView Roles="Basic">
-        <p>Displayed if the logged in user is in Basic role</p>
-    </AuthorizeView>
-
     <AuthorizeView>
         <Authorized>
             <h1>Expense Claim </h1>
@@ -34,10 +24,16 @@
             <br />
             <h1>You are not authorized  </h1>
 
-            <br />
-            <button @onclick="NavigateToLogin">Click here to log in</button>
-            <br />
-            <button @onclick="NavigateToRegister">Click here to register</button>
+            <div class="form-group row">
+                <h1></h1>
+            </div>
+            <div class="form-group row">
+                <button class="btn btn-dark" @onclick="NavigateToLogin">Click here to log in</button>
+            </div>
+            <div class="form-group row">
+                <button class="btn btn-dark" @onclick="NavigateToRegister">Click here to register</button>
+            </div>
+
         </NotAuthorized>
         <Authorizing>
             <h1>Authorizing.... index.razor </h1>

@@ -1,0 +1,15 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <span>Hello, @context.User.Identity.Name!</span>
+        @*<NavLink class="nav-link" href="#" Match="NavLinkMatch.All" @onclick="Logout">
+            <span class="oi oi-check" aria-hidden="true"></span> Logout
+        </NavLink>*@
+    </Authorized>
+    <NotAuthorized>
+        @*<a href="Register">Register</a>
+            <a href="Login" class="nav-link btn btn-link">Log in</a>*@
+    </NotAuthorized>
+</AuthorizeView>
+
+
+

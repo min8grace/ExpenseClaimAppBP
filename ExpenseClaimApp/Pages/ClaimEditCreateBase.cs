@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using ExpenseClaimApp.Auth;
 using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using StoreManager.Application.Features.Categories.Queries.GetAllCategories;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
@@ -9,6 +11,7 @@ using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ExpenseClaimApp.Pages
@@ -23,20 +26,20 @@ namespace ExpenseClaimApp.Pages
         [Inject]
         public IClaimService ClaimService { get; set; }
         private Claim Claim { get; set; } = new Claim();
-        public ClaimEditModel ClaimEditModel { get; set; } = new ClaimEditModel();
-        public string RequesterComments { get; set; } = string.Empty;
-        public string ApproverComments { get; set; } = string.Empty;
-        public string FinanceComments { get; set; } = string.Empty;
-        public decimal TotalAmount  { get; set; } 
+        protected ClaimEditModel ClaimEditModel { get; set; } = new ClaimEditModel();
+        protected string RequesterComments { get; set; } = "N/A";
+        protected string ApproverComments { get; set; } = "N/A";
+        protected string FinanceComments { get; set; } = "N/A";
+        protected decimal TotalAmount  { get; set; }
         [Inject]
         public ICategoryService CategoryService { get; set; }
         [Inject]
         public ICurrencyService CurrencyService { get; set; }
 
         public List<GetAllCategoriesResponse> Categories { get; set; } = new List<GetAllCategoriesResponse>();
-        public string CategoryId { get; set; }
+        protected string CategoryId { get; set; }
         public List<GetAllCurrenciesResponse> Currencies { get; set; } = new List<GetAllCurrenciesResponse>();
-        public string CurrencyId { get; set; }
+        protected string CurrencyId { get; set; }
 
         [Inject]
         public ILineItemService LineItemService { get; set; }
@@ -55,8 +58,28 @@ namespace ExpenseClaimApp.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+        [Inject]
+        public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        protected string Name { get; set; }
+        protected string Role { get; set; }
         protected override async Task OnInitializedAsync()
         {
+            var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+            var AuthenticationStateUser = authenticationState.User;
+            Name = AuthenticationStateUser.Claims.Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
+            if (Name == null)
+            {
+                Name = (await authenticationStateTask).User.Claims.Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
+            }
+            if (!authenticationState.User.Identity.IsAuthenticated)
+            {
+                string returnUrl = WebUtility.UrlEncode($"/list");
+                NavigationManager.NavigateTo($"/login?returnUrl={returnUrl}");
+            }
+
             Categories = (await CategoryService.GetCategories()).ToList();           
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
 
@@ -78,6 +101,7 @@ namespace ExpenseClaimApp.Pages
             {
                 ClaimEditModel = new ClaimEditModel
                 {
+                    Requester = Name,
                     SubmitDate = DateTime.Now,
                     Status = (Status)Enum.Parse(typeof(Status), "Requested")
                 };
@@ -96,32 +120,33 @@ namespace ExpenseClaimApp.Pages
         protected async Task HandleValidSubmit()
         {
             Mapper.Map(ClaimEditModel, Claim);
-
-           
-            if (Claim.Id != 0)//Edit
+            Claim.RequesterComments = RequesterComments;
+            Claim.ApproverComments = ApproverComments;
+            Claim.FinanceComments = FinanceComments;
+            Claim.SubmitDate = DateTime.Now;
+            Claim.Requester = Name;//Id(email)
+            Claim.Status = Status.Requested;
+            Claim.TotalAmount = Sum();
+            if (Claim.Id != 0)//Edit-Submit
             {
+                await ClaimService.UpdateClaim(Claim);
                 StatusClass = "alert-success";
                 Message = "Employee updated successfully.";
                 Saved = true;
-                NavigationManager.NavigateTo("/", true);
+                NavigationManager.NavigateTo("/list", true);
             }
-            else//Create
+            else//Create-Submit
             {
-                Claim.RequesterComments = RequesterComments;
-                Claim.ApproverComments = ApproverComments;
-                Claim.FinanceComments = FinanceComments;
-
                 var result = await ClaimService.CreateClaim(Claim);
-               
-                if (result.Id != 0) 
+                if (result.Id != 0)
                 {
                     LineItem ResultItem = null;
-                    foreach(var Item in LineItemEditModels)
+                    foreach (var Item in LineItemEditModels)
                     {
                         Mapper.Map(Item, LineItem);
                         LineItem.ClaimId = result.Id;
                         ResultItem = await LineItemService.CreateLineItem(LineItem);
-                    }                    
+                    }
                     NavigationManager.NavigateTo($"/detail/{result.Id}", true);
                 }
                 else
@@ -130,7 +155,45 @@ namespace ExpenseClaimApp.Pages
                     Message = "Something went wrong Creating the new employee. Please try again.";
                     Saved = false;
                 }
-                
+            }
+        }
+
+        protected async Task Save_Click()
+        {
+            Mapper.Map(ClaimEditModel, Claim);
+            Claim.RequesterComments = RequesterComments;
+            Claim.ApproverComments = ApproverComments;
+            Claim.FinanceComments = FinanceComments;
+            Claim.TotalAmount = Sum();
+            if (Claim.Id != 0)//Edit-Save
+            {                
+                await ClaimService.UpdateClaim(Claim);
+                StatusClass = "alert-success";
+                Message = "Employee updated successfully.";
+                Saved = true;
+                NavigationManager.NavigateTo("/list", true);
+            }
+            else//Create-Save
+            {
+                Claim.Status = Status.Saved;
+                var result = await ClaimService.CreateClaim(Claim);
+                if (result.Id != 0)
+                {
+                    LineItem ResultItem = null;
+                    foreach (var Item in LineItemEditModels)
+                    {
+                        Mapper.Map(Item, LineItem);
+                        LineItem.ClaimId = result.Id;
+                        ResultItem = await LineItemService.CreateLineItem(LineItem);
+                    }
+                    NavigationManager.NavigateTo($"/detail/{result.Id}", true);
+                }
+                else
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong Creating the new employee. Please try again.";
+                    Saved = false;
+                }
             }
         }
 
@@ -164,6 +227,15 @@ namespace ExpenseClaimApp.Pages
             //}
 
         }
-        
+
+        protected decimal Sum()
+        {
+             decimal cnt =0; 
+            foreach (var item in LineItemEditModels)
+            {
+                cnt = cnt + item.USDAmount;
+            }
+            return cnt;
+        }        
     }
 }

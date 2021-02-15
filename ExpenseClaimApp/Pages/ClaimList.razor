@@ -4,7 +4,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <h6 class="mb-4">Hello, @Name</h6>
+        @* <h6 class="mb-4">Hello, @Name</h6>*@
     </Authorized>
 </AuthorizeView>
 
@@ -27,10 +27,10 @@
     </thead>
     <tbody>
 
-
+        @*Requested = 1, Approved = 2, Rejected = 3, Queried = 4, Financing = 5, RejectedByFinance = 7, Finished = 8, Saved = 99*@
         @if (Claims == null)
         {
-            <tr>        
+            <tr>
                 <th scope="row"> </th>
                 <td> NO DATA </td>
             </tr>
@@ -49,13 +49,24 @@
                     <td> @item.TotalAmount</td>
                     <td> @item.Status</td>
                     <td>
-                        @if (Role == "Admin" || Role == "Basic")
+                        @if (Role == "Basic")
                         {
-                            <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
-                            <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                            <button class="btn btn-primary" type="button" value="@ClaimId" @onclick="Delete_Click">
-                                Delete
-                            </button>
+                            if (item.Status == StoreManager.Domain.Entities.Expense.Status.Finished) { }
+                            else if (item.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
+                                item.Status == StoreManager.Domain.Entities.Expense.Status.Queried ||
+                                item.Status == StoreManager.Domain.Entities.Expense.Status.RejectedByFinance ||
+                                item.Status == StoreManager.Domain.Entities.Expense.Status.Saved)
+                            {
+                                <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                                <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                                <button class="btn btn-primary" type="button" value="@ClaimId" @onclick="Delete_Click">
+                                    Delete
+                                </button>
+                            }
+                            else
+                            {
+                                <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            }
                         }
                         else if (Role == "Approver")
                         {
@@ -65,17 +76,22 @@
                         {
                             <a href="@($"/Finance/{item.Id}")" class="btn btn-primary m-0">Detail</a>
                         }
+                        else if (Role == "Admin" || Role == "SuperAdmin")
+                        {
+                            <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                            <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            <button class="btn btn-primary" type="button" value="@ClaimId" @onclick="Delete_Click">
+                                Delete
+                            </button>
+                        }
                         else
                         { <a href="@($"/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>}
-
                     </td>
 
                 </tr>
             }
         }
-
     </tbody>
-
 </table>
 
 

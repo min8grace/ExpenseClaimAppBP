@@ -20,6 +20,7 @@ namespace ExpenseClaimApp.Auth
             _httpClient = httpClient;
             _localStorage = localStorage;
         }
+
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var savedToken = await _localStorage.GetItemAsync<string>("token");
@@ -28,10 +29,26 @@ namespace ExpenseClaimApp.Auth
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));//Anonymouse
             }
+            return BuildAuthenticationState(savedToken);
+        }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+        public async Task Login(string token,  string email)
+        {
+            await _localStorage.SetItemAsync("token", token);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseTokenClaims(savedToken), "jwt")));
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            //var authState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseTokenClaims(token).Union(new[] { new Claim(ClaimTypes.Name, email) }), "jwt")));
+
+            var authState = BuildAuthenticationState(token);
+            NotifyAuthenticationStateChanged(Task.FromResult(authState));
+        }
+
+        private AuthenticationState BuildAuthenticationState(string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            var claims = ParseTokenClaims(token);
+            var email = claims.ToList().Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims.Union(new[] { new Claim(ClaimTypes.Name, email) }), "jwt")));
         }
 
         public void SetUserAuthenticated(string email)

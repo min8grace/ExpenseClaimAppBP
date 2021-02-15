@@ -12,7 +12,7 @@ namespace StoreManager.Domain.Entities.Expense
 
     public enum Status
     {
-        Requested = 1, Approved = 2, Rejected = 3, Queried = 4, Financing = 5, RejectedByFinance = 7, Finished = 8
+        Requested = 1, Approved = 2, Rejected = 3, Queried = 4, Financing = 5, RejectedByFinance = 7, Finished = 8, Saved = 99
     }
     public class Claim : AuditableEntity
     {

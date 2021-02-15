@@ -52,9 +52,10 @@ namespace ExpenseClaimApp.Services
 
                     if (tokenResponse.JWToken != string.Empty)
                     {
-                        await localStorage.SetItemAsync("token", tokenResponse.JWToken);
-                        ((CustomAuthenticationStateProvider)authenticationStateProvider).SetUserAuthenticated(email);
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenResponse.JWToken);
+                        ((CustomAuthenticationStateProvider)authenticationStateProvider).Login(tokenResponse.JWToken, email);
+                        //await localStorage.SetItemAsync("token", tokenResponse.JWToken);      
+                        //((CustomAuthenticationStateProvider)authenticationStateProvider).SetUserAuthenticated(email);
+                        //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenResponse.JWToken);
                         return true;
                     }
                 } 

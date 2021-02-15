@@ -9,14 +9,12 @@
 }
 else
 {
-
-    <h1>ClaimDetail</h1>
-
+    <h1>Claim Detail</h1>
     <div>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
-                #Id
+                Claim No.
             </dt>
             <dd class="col-sm-10">
                 @Claim.Id
@@ -91,26 +89,22 @@ else
     @if (Claim.LineItems != null)
     {
         <h3>
-            Items in the Claim
+            Items
         </h3>
         <table class="table">
             <tr>
-
-                <th>CategoryId</th>
+                <th>Category</th>
                 <th>Payee</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th>Amount</th>
-                <th>CurrencyCode</th>
-                <th>USDAmount</th>
+                <th>Currency</th>
+                <th>USD</th>
                 <th>         </th>
             </tr>
             @foreach (var item in Claim.LineItems)
             {
-
                 <tr>
-
-
                     <td>
                         @item.Category.Name
                     </td>
@@ -133,17 +127,44 @@ else
                         @item.USDAmount
                     </td>
                     <td>
-                        <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
-                        <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                        <a href="/" class="btn btn-primary m-0">Delete</a>
-                        @*<a href="#" class="btn btn-primary m-0" value="@item.ClaimId" @onclick="Delete_Click">Delete</a>*@
-                        @*<button class="btn btn-danger" type="button" value="@ClaimId" @onclick="Delete_Click">
+                        @if (Role == "Basic")
+                        {
+                            if (Claim.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
+                                Claim.Status == StoreManager.Domain.Entities.Expense.Status.Queried ||
+                                Claim.Status == StoreManager.Domain.Entities.Expense.Status.RejectedByFinance ||
+                                Claim.Status == StoreManager.Domain.Entities.Expense.Status.Saved)
+                            {
+                                <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                                <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                                <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id))">
+                                    Delete
+                                </button>
+                            }
+                            else
+                            {
+                                <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            }
+                        }
+                        else if (Role == "Approver")
+                        {
+                            <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                        }
+                        else if (Role == "Finance")
+                        {
+                            <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                        }
+                        else if (Role == "Admin" || Role == "SuperAdmin")
+                        {
+                            <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
+                            <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
+                            <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id))">
                                 Delete
-                            </button>*@
+                            </button>
+                        }
+                        else
+                        { <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>}
                     </td>
-
                 </tr>
-
             }
         </table>
     }
@@ -152,6 +173,11 @@ else
 <button class="btn btn-outline-primary" type="button" @onclick="BackToList">
     Back to full List
 </button>
+<hr />
 
 
 
+@*<a href="#" class="btn btn-primary m-0" value="@item.ClaimId" @onclick="Delete_Click">Delete</a>*@
+@*<button class="btn btn-danger" type="button" value="@ClaimId" @onclick="Delete_Click">
+        Delete
+    </button>*@

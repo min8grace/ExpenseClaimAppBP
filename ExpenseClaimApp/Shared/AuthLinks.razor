@@ -1,9 +1,9 @@
 ﻿<AuthorizeView>
     <Authorized>
         <span>Hello, @context.User.Identity.Name!</span>
-        @*<NavLink class="nav-link" href="#" Match="NavLinkMatch.All" @onclick="Logout">
-            <span class="oi oi-check" aria-hidden="true"></span> Logout
-        </NavLink>*@
+        <NavLink class="nav-link" href="#" Match="NavLinkMatch.All" @onclick="Logout">
+            <span class="oi" aria-hidden="true"></span> Logout
+        </NavLink>
     </Authorized>
     <NotAuthorized>
         @*<a href="Register">Register</a>
@@ -13,3 +13,17 @@
 
 
 
+@using ExpenseClaimApp.Services
+
+
+@code {
+
+    [Inject]
+    public IAuthenticationService AuthenticationService { get; set; }
+
+    private async void Logout()
+    {
+        await AuthenticationService.Logout();
+    }
+
+}

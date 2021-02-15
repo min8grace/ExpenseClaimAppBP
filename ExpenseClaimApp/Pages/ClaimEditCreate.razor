@@ -149,10 +149,11 @@
                 <th></th>
             </tr>
 
-            @if (ClaimEditModel.Id == 0)
+            @if (ClaimEditModel.Id == 0)//Create
             {
                 @foreach (var item in LineItemEditModels)// Adding LineItems
                 {
+                    int idx = LineItemEditModels.IndexOf(item);
                     <tr>
                         <td>
                             <InputSelect id="category" @bind-Value="item.CategoryId" class="form-control" style="width:150px">
@@ -176,8 +177,14 @@
                             <ValidationMessage For="@(()=> LineItemEditModel.Description)" />
                         </td>
                         <td>
-                            <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" />
-                            <ValidationMessage For="@(()=> LineItemEditModel.Amount)" />
+                            @if (item.CurrencyId == 7)
+                            {
+                               <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount"  Disabled/>
+                            }
+                            else
+                            { <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" />
+                                <ValidationMessage For="@(()=> LineItemEditModel.Amount)" />
+                            }
                         </td>
                         <td>
                             <InputSelect id="category" @bind-Value="item.CurrencyId" class="form-control" style="width:80px">
@@ -189,9 +196,9 @@
                             <ValidationMessage For="@(()=> LineItemEditModel.CurrencyId)" />
                         </td>
                         <td>
-
-                            <InputNumber id="title" class="form-control" placeholder="USD" style="width:120px" @bind-Value="item.USDAmount" />
-                            @*@onchange="@(x=> { ClaimEditModel.TotalAmount = ClaimEditModel.TotalAmount  + int.Parse(x.Value.ToString()); })" />*@
+                            <input type="number" id="title" class="form-control" style="width:120px"
+                                   value="LineItemEditModels[idx].USDAmount" @oninput="(e) => EventAmt(idx, e)">
+                            <br>
                         </td>
                         <td>
                             <button class="btn-xs btn-outline-primary" type="button" style="width:30px" @onclick="@(x=>Delete_Lineitem(@item))">
@@ -203,7 +210,7 @@
                 }
 
             }
-            else //Only in case lineitems exist
+            else //Only in case lineitems exist -> Edit
             {
 
                 @foreach (var item in ClaimEditModel.LineItems)

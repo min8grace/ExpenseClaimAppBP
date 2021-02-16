@@ -100,10 +100,13 @@ else
                 <th>Amount</th>
                 <th>Currency</th>
                 <th>USD</th>
+                <th>Receipt</th>
                 <th>         </th>
             </tr>
             @foreach (var item in Claim.LineItems)
             {
+                var imageDataUrls = (LineItemImageModels.Where(x => x.Id == item.Id).Select(x => x.ImageDataUrls)).FirstOrDefault();
+
                 <tr>
                     <td>
                         @item.Category.Name
@@ -127,6 +130,21 @@ else
                         @item.USDAmount
                     </td>
                     <td>
+
+                        @if (item.Receipt != null && item.Receipt.Length > 0)
+                        {
+                            @foreach (var imageDataUrl in imageDataUrls)
+                            {
+                                <div class="card" style="width:5rem;">
+                                    <div class="card-body">
+                                        <img class="rounded m-1" src="@imageDataUrl" @onclick="(e => SelectImage(imageDataUrl))" style="width: 100%;
+                                            object-fit: cover; padding-top: 10px;" type="button" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </td>
+                    <td>
                         @if (Role == "Basic")
                         {
                             if (Claim.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
@@ -136,7 +154,7 @@ else
                             {
                                 <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
                                 <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                                <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id))">
+                                <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id,@Claim.Id))">
                                     Delete
                                 </button>
                             }
@@ -157,7 +175,7 @@ else
                         {
                             <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
                             <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                            <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id))">
+                            <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id,@Claim.Id))">
                                 Delete
                             </button>
                         }
@@ -175,9 +193,37 @@ else
 </button>
 <hr />
 
-
-
-@*<a href="#" class="btn btn-primary m-0" value="@item.ClaimId" @onclick="Delete_Click">Delete</a>*@
-@*<button class="btn btn-danger" type="button" value="@ClaimId" @onclick="Delete_Click">
-        Delete
-    </button>*@
+@if (ShowDialog)
+{
+    <!-- Modal -->
+    <div class="modal fade show d-block" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="receiptTitle">Selected Receipt</h5>
+                    <button type="button" class="close" @onclick="(e => CloseModal())" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body align-self-center">
+                    <div class="card">
+                        <img class="viewableImage" src="@selectedImage" style="width: 100%; object-fit: cover; padding-top: 10px;">
+                        @*<div class="card-img" style="background-image: url('@selectedImage');">
+                            </div>*@
+                        @*<div class="card align-self-center" style="width:25rem; height:25rem;">
+                                <div class="card-body align-self-center">
+                                    <img class="rounded m-auto" src="@selectedImage" />
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="(e => CloseModal())" class="btn btn-outline-primary" type="button">
+                        Close
+                    </button>
+                    @*<button type="button" class="btn btn-primary">Save changes</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+}

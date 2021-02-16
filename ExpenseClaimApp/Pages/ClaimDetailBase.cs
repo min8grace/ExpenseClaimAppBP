@@ -1,10 +1,12 @@
 ﻿using ExpenseClaimApp.Auth;
+using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -36,6 +38,9 @@ namespace ExpenseClaimApp.Pages
         public string Name { get; set; }
         public string Role { get; set; }
 
+        protected List<LineItemImageModel> LineItemImageModels = new List<LineItemImageModel>();
+        protected IList<string> imageDataUrls = new List<string>();
+        protected ImageConverter _imageConverter;// = new ImageConverter();
 
         protected override async Task OnInitializedAsync()
         {
@@ -59,11 +64,38 @@ namespace ExpenseClaimApp.Pages
             else if (authenticationState.User.IsInRole("Finance")) Role = "Finance";
             else if (authenticationState.User.IsInRole("Approver")) Role = "Approver";
             else if (authenticationState.User.IsInRole("Basic")) Role = "Basic";
+
+            foreach (var LineItem in Claim.LineItems)
+            {
+                if (LineItem.Receipt != null)
+                {
+                    imageDataUrls.Clear();
+                    var format = "image/png";
+                    var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
+                    imageDataUrls.Add(imageDataUrl);
+                    LineItemImageModel Lim = new LineItemImageModel { Id = LineItem.Id, ImageDataUrls = imageDataUrls.ToList() };
+                    LineItemImageModels.Add(Lim);
+                }
+            }
         }
-        protected async Task Delete_Click(int SelectedId)
+
+        protected string selectedImage;
+        protected void SelectImage(string imageDataUrl)
+        {
+            ShowDialog = true;
+            selectedImage = imageDataUrl;
+        }
+        public bool ShowDialog { get; set; }
+        protected void CloseModal()
+        {
+            ShowDialog = false;
+            StateHasChanged();
+        }
+
+        protected async Task Delete_Click(int SelectedId, int SeletedClaimId)
         {
             await LineItemService.DeleteLineItem(SelectedId);
-            NavigationManager.NavigateTo("/ins/LineItem", true);
+            NavigationManager.NavigateTo($"/detail/{SeletedClaimId}", true);
         }
 
         protected async Task BackToList()

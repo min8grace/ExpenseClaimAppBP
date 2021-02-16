@@ -130,7 +130,7 @@
 
     <hr class="rounded">
 
-    @if (ClaimEditModel.LineItems != null) // Create
+    @if (ClaimEditModel.LineItems != null)
     {
         <h3>
             Line Items
@@ -139,6 +139,7 @@
         </h3>
         <table class="table">
             <tr>
+                <th></th>
                 <th>Category</th>
                 <th>Payee</th>
                 <th>Date</th>
@@ -150,147 +151,111 @@
                 <th></th>
             </tr>
 
-            @if (ClaimEditModel.Id == 0)//Create
+            @foreach (var item in LineItemEditModels)// Adding LineItems
             {
-                @foreach (var item in LineItemEditModels)// Adding LineItems
-                {
-                    int idx = LineItemEditModels.IndexOf(item);
+                int idx = LineItemEditModels.IndexOf(item);
+                <tr>
+                    <td>
+                        <button class="oi oi-delete" type="button" @onclick="@(x => Delete_Lineitem(@item))"></button>
+                        @*<button class="oi oi-delete" type="button" @onclick="@(x => Delete_Lineitem(@item))"></button>*@
+                    </td>
+                    <td>
+                        <InputSelect id="category" @bind-Value="item.CategoryId" class="form-control" style="width:150px">
+                            @foreach (var cart in Categories)
+                                    {
+                                <option value="@cart.Id"> @cart.Name</option>
+                                    }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => LineItemEditModel.CategoryId)" />
+                    </td>
+                    <td>
+                        <InputText id="Payee" class="form-control" placeholder="Payee" style=" width:100px" @bind-Value="item.Payee" />
+                        <ValidationMessage For="@(() => LineItemEditModel.Payee)" />
+                    </td>
+                    <td>
+                        <InputDate id="Date" class="form-control" placeholder="Date" style=" width:120px" @bind-Value="item.Date" />
+                        <ValidationMessage For="@(() => LineItemEditModel.Date)" />
+                    </td>
+                    <td>
+                        <InputText id="Description" class="form-control" placeholder="Description" style="width:230px" @bind-Value="item.Description" />
+                        <ValidationMessage For="@(() => LineItemEditModel.Description)" />
+                    </td>
+                    <td>
+                        @if (item.CurrencyId == 7)
+                        {
+                            <InputNumber id="Amount" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" Disabled />
+                        }
+                        else
+                        { <InputNumber id="Amount" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" />
+                            <ValidationMessage For="@(() => LineItemEditModel.Amount)" />
+                        }
+                    </td>
+                    <td>
+                        <InputSelect id="CurrencyId" @bind-Value="item.CurrencyId" class="form-control" style="width:80px">
+                            @foreach (var curr in Currencies)
+                                    {
+                                <option value="@curr.Id"> @curr.Name</option>
+                                    }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => LineItemEditModel.CurrencyId)" />
+                    </td>
+                    <td>
+                        <InputNumber id="title" class="form-control" style="width:120px" @bind-Value="item.USDAmount" @oninput="(e) => EventAmt(idx, e)" />
+                        <br>
+                    </td>
 
-                    <tr>
-                        <td>
-                            <InputSelect id="category" @bind-Value="item.CategoryId" class="form-control" style="width:150px">
-                                @foreach (var cart in Categories)
-                                            {
-                                    <option value="@cart.Id"> @cart.Name</option>
-                                            }
-                            </InputSelect>
-                            <ValidationMessage For="@(() => LineItemEditModel.CategoryId)" />
-                        </td>
-                        <td>
-                            <InputText id="title" class="form-control" placeholder="Payee" style=" width:100px" @bind-Value="item.Payee" />
-                            <ValidationMessage For="@(() => LineItemEditModel.Payee)" />
-                        </td>
-                        <td>
-                            <InputDate id="title" class="form-control" placeholder="Date" style=" width:120px" @bind-Value="item.Date" />
-                            <ValidationMessage For="@(() => LineItemEditModel.Date)" />
-                        </td>
-                        <td>
-                            <InputText id="title" class="form-control" placeholder="Description" style="width:350px" @bind-Value="item.Description" />
-                            <ValidationMessage For="@(() => LineItemEditModel.Description)" />
-                        </td>
-                        <td>
-                            @if (item.CurrencyId == 7)
+                    <td>
+                        @if (item.Receipt != null && item.Receipt.Length > 0)
+                        {
+                            var Idus = (LineItemImageModels.Where(x => x.Id == item.Id).Select(x => x.ImageDataUrls)).FirstOrDefault();
+
+                            @foreach (var imageDataUrl in Idus)
                             {
-                                <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" Disabled />
-                            }
-                            else
-                            { <InputNumber id="title" class="form-control" placeholder="Amount" style="width:120px" @bind-Value="item.Amount" />
-                                <ValidationMessage For="@(() => LineItemEditModel.Amount)" />
-                            }
-                        </td>
-                        <td>
-                            <InputSelect id="category" @bind-Value="item.CurrencyId" class="form-control" style="width:80px">
-                                @foreach (var curr in Currencies)
-                                            {
-                                    <option value="@curr.Id"> @curr.Name</option>
-                                            }
-                            </InputSelect>
-                            <ValidationMessage For="@(() => LineItemEditModel.CurrencyId)" />
-                        </td>
-                        <td>
-                            <input type="number" id="title" class="form-control" style="width:120px"
-                                   value="LineItemEditModels[idx].USDAmount" @oninput="(e) => EventAmt(idx, e)">
-                            <br>
-                        </td>
-
-                        <td>
-                            <InputFile OnChange="(e)=> OnInputFileChange(e,item)" />
-                            @if (item.Receipt != null && item.Receipt.Length > 0)
-                            {
-                                var Idus = (LineItemImageModels.Where(x => x.Id == item.Id).Select(x => x.ImageDataUrls)).FirstOrDefault();
-
-                                @foreach (var imageDataUrl in Idus)
-                                {
-                                    <div class="card" style="width:5rem;">
-                                        <div class="card-body">
-                                            <img class="rounded m-1" src="@imageDataUrl" @onclick="(e => SelectImage(imageDataUrl))"
-                                                 style="width: 100%; object-fit: cover; padding-top: 10px;" type="button" />
-                                        </div>
+                                <div class="card" style="width:5rem;">
+                                    <div class="card-body">
+                                        <img class="rounded m-1" src="@imageDataUrl" @onclick="(e => SelectImage(imageDataUrl))"
+                                             style="width: 100%; object-fit: cover; padding-top: 10px;" type="button" />
                                     </div>
-                                }
+                                </div>
                             }
-                        </td>
+                        }
+                    </td>
 
-                        <td>
-                            <button class="btn-xs btn-outline-primary" type="button" style="width:30px" @onclick="@(x => Delete_Lineitem(@item))">
-                                X
-                            </button>
-                        </td>
-
-                    </tr>
-                }
-            }
-            else //Only in case lineitems exist -> Edit
-            {
-
-                @foreach (var item in ClaimEditModel.LineItems)
-                {
-                    var imageDataUrls = (LineItemImageModels.Where(x => x.Id == item.Id).Select(x => x.ImageDataUrls)).FirstOrDefault();
-
-                    <tr>
-                        <td>
-                            @item.Category.Name
-                        </td>
-                        <td>
-                            @item.Payee
-                        </td>
-                        <td>
-                            @item.Date
-                        </td>
-                        <td>
-                            @item.Description
-                        </td>
-                        <td>
-                            @item.Amount
-                        </td>
-                        <td>
-                            @item.Currency.Name
-                        </td>
-                        <td>
-                            @item.USDAmount
-                        </td>
-                        <td>
-                            @if (item.Receipt != null && item.Receipt.Length > 0)
-                            {
-                                @foreach (var imageDataUrl in imageDataUrls)
-                                {
-                                    <div class="card" style="width:5rem;">
-                                        <div class="card-body">
-                                            <img class="rounded m-1" src="@imageDataUrl" @onclick="(e => SelectImage(imageDataUrl))"
-                                                 style="width: 100%; object-fit: cover; padding-top: 10px;" type="button" />
-                                            <button class="btn btn-outline-primary btn-sm" type="button" @onclick="@(x => Delete_Img_Click(@imageDataUrl))">
-                                                x
-                                            </button>
-                                            @*<button @onclick="(e => SelectImage(imageDataUrl))" data-toggle="modal" data-target="#receiptModal" class="btn btn-outline-primary" type="button">
-                                                </button>*@
-                                        </div>
-                                    </div>
-                                }
-                            }
-                        </td>
-                        <td>
-                            <a href="@($"lineitem/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
-                            <a href="@($"lineitem/detail/{item.Id}")" class="btn btn-primary m-0">Detail</a>
-                            <button class="btn btn-primary" type="button" value="@item.Id" @onclick="@(x => Delete_Click(@item.Id, ClaimEditModel.Id))">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                }
-
+                    <td>
+                        @*<button class="btn btn-outline-primary" type="button" @onclick="(e => AddImage(item))"></button>*@
+                        <button class="oi oi-paperclip" type="button" @onclick="(e => AddImage(item))"></button>
+                    </td>
+                </tr>
             }
         </table>
+        @if (ShowImageDialog)
+        {
+            <!-- Modal -->
+            <div class="modal fade show d-block" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="receiptTitle">Selected Receipt</h5>
+                            <button type="button" class="close" @onclick="(e => CloseModal())" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body align-self-center">
+                            <div class="card">
+                                <InputFile OnChange="(e)=> OnInputFileChange(e, Liem)" />
 
+                                @*<img class="viewableImage" src="@selectedImage" style="width: 100%; object-fit: cover; padding-top: 10px;">*@
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button @onclick="(e => CloseModal())" class="btn btn-outline-primary" type="button">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
         @if (ShowDialog)
         {
             <!-- Modal -->
@@ -325,6 +290,9 @@
                 </div>
             </div>
         }
+
+
+
     }
     <button class="btn btn-primary" type="submit">Submit</button>
     <button class="btn btn-outline-primary" type="button" @onclick="Save_Click">Save</button>
@@ -334,3 +302,4 @@
     </button>
 </EditForm>
 <hr />
+

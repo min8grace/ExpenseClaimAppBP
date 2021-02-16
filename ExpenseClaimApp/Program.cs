@@ -26,12 +26,6 @@ namespace ExpenseClaimApp
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>(
                 provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 
-            //builder.Services.AddAuthentication("Identity.Application").AddCookie();
-
-            //var provider = new CustomAuthenticationStateProvider();
-            //builder.Services.AddSingleton(c => provider);
-            //builder.Services.AddSingleton<AuthenticationStateProvider>(c => provider);
-
 
             builder.Services.AddSingleton(new HttpClient
             {
@@ -54,21 +48,6 @@ namespace ExpenseClaimApp
             builder.Services.AddAutoMapper(typeof(LineItemProfile));
             builder.Services.AddAutoMapper(typeof(ClaimProfile));
 
-            //services.AddHttpClient<IClaimService, ClaimService>(client =>
-            //{
-            //    client.BaseAddress = new Uri("https://localhost:44377/");
-            //});
-
-            //builder.Services.AddSingleton(new HttpClient
-            //{
-            //    BaseAddress = new Uri("https://localhost:5001")
-            //});
-            //builder.Services.AddHttpClient<IClient, Client>(client => client.BaseAddress = new Uri("https://localhost:5001"));
-            //builder.Services.AddScoped<ICategoryService, CategoryService>();
-            //builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            //builder.Services.AddHttpClient<ICountryDataService, CountryDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
-            //builder.Services.AddHttpClient<IJobCategoryDataService, JobCategoryDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();
         }

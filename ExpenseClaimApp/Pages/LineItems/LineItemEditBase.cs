@@ -38,6 +38,7 @@ namespace ExpenseClaimApp.Pages.LineItems
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+
         protected IList<string> imageDataUrls = new List<string>();
         protected ImageConverter _imageConverter;// = new ImageConverter();
         [Inject]
@@ -76,6 +77,7 @@ namespace ExpenseClaimApp.Pages.LineItems
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
             CurrencyId = LineItem.CurrencyId.ToString();
 
+
             if (LineItem.Receipt.Length > 0 ) {
                 var format = "image/png";
                 var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
@@ -92,7 +94,7 @@ namespace ExpenseClaimApp.Pages.LineItems
             { Message = "max Allowed Files are 5"; return; }
             foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
             {
-                var resizedImageFile = await imageFile.RequestImageFileAsync(format, 100, 100);
+                var resizedImageFile = await imageFile.RequestImageFileAsync(format, 50, 50);
 
                 var buffer = new byte[resizedImageFile.Size];
                 await resizedImageFile.OpenReadStream().ReadAsync(buffer);
@@ -102,9 +104,25 @@ namespace ExpenseClaimApp.Pages.LineItems
                     imageDataUrls.Clear();
                     imageDataUrls.Add(imageDataUrl);
                 }
+                
+                buffer = new byte[imageFile.Size];
+                await imageFile.OpenReadStream().ReadAsync(buffer);
                 LineItemEditModel.Receipt = buffer;
                 //var image = resizedImageFile.OptimizeImageSize(700, 700);
             }
+        }
+
+        protected string selectedImage;
+        protected void SelectImage(string imageDataUrl)
+        {
+            ShowDialog = true;
+            selectedImage = imageDataUrl;
+        }
+        public bool ShowDialog { get; set; }
+        protected void CloseModal()
+        {
+            ShowDialog = false;
+            StateHasChanged();
         }
 
         protected void Delete_Img_Click(string imageDataUrl)
@@ -118,7 +136,7 @@ namespace ExpenseClaimApp.Pages.LineItems
             Mapper.Map(LineItemEditModel, LineItem);
             LineItem result = null;
 
-            if (LineItem.Id != 0)
+            if (LineItem.Id != 0)//Edit
             {
                 LineItem.Description = Description;
                 await LineItemService.UpdateLineItem(LineItem);
@@ -128,7 +146,7 @@ namespace ExpenseClaimApp.Pages.LineItems
                 //StateHasChanged();
                 NavigationManager.NavigateTo($"/edit/{LineItem.ClaimId}", true);
             }
-            else
+            else//Create
             {
                 result = await LineItemService.CreateLineItem(LineItem);
                 if (result == null)
@@ -139,9 +157,8 @@ namespace ExpenseClaimApp.Pages.LineItems
                 }
                 else NavigationManager.NavigateTo($"/detail/{LineItem.ClaimId}", true);
             }
-
-
         }
+
         protected async Task BackToList()
         {
             NavigationManager.NavigateTo($"/edit/{LineItem.ClaimId}", true);

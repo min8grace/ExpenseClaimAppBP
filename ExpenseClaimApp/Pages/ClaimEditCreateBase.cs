@@ -4,15 +4,18 @@ using ExpenseClaimApp.Models;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using StoreManager.Application.Features.Categories.Queries.GetAllCategories;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Currencies.Queries.GetAllCurrencies;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace ExpenseClaimApp.Pages
 {
@@ -65,6 +68,11 @@ namespace ExpenseClaimApp.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         protected string Name { get; set; }
         protected string Role { get; set; }
+
+        protected List<LineItemImageModel> LineItemImageModels = new List<LineItemImageModel>();
+        protected IList<string> imageDataUrls = new List<string>();
+        protected ImageConverter _imageConverter;// = new ImageConverter();
+
         protected override async Task OnInitializedAsync()
         {
             var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
@@ -80,7 +88,7 @@ namespace ExpenseClaimApp.Pages
                 NavigationManager.NavigateTo($"/login?returnUrl={returnUrl}");
             }
 
-            Categories = (await CategoryService.GetCategories()).ToList();           
+            Categories = (await CategoryService.GetCategories()).ToList();
             Currencies = (await CurrencyService.GetCurrencies()).ToList();
 
             //Id = Id ?? "1";
@@ -90,24 +98,97 @@ namespace ExpenseClaimApp.Pages
                 Claim = (await ClaimService.GetClaimById(int.Parse(Id)));
                 Mapper.Map(Claim, ClaimEditModel);
 
-                if(ClaimEditModel.RequesterComments!=null)
+                if (ClaimEditModel.RequesterComments != null)
                     RequesterComments = ClaimEditModel.RequesterComments;
                 if (ClaimEditModel.ApproverComments != null)
                     ApproverComments = ClaimEditModel.ApproverComments;
                 if (ClaimEditModel.FinanceComments != null)
                     FinanceComments = ClaimEditModel.FinanceComments;
+                if (Claim.LineItems.Count() > 0)
+                {
+                    foreach (var LineItem in Claim.LineItems)
+                    {
+                        if (LineItem.Receipt != null)
+                        {
+                            imageDataUrls.Clear();
+                            var format = "image/png";
+                            var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
+                            imageDataUrls.Add(imageDataUrl);
+                            LineItemImageModel Lim = new LineItemImageModel { Id = LineItem.Id, ImageDataUrls = imageDataUrls.ToList() };
+                            LineItemImageModels.Add(Lim);
+                        }
+                    }
+                }
             }
             else // for Create
             {
                 ClaimEditModel = new ClaimEditModel
                 {
                     Requester = Name,
-                    SubmitDate = DateTime.Now,                    
+                    SubmitDate = DateTime.Now,
                     Status = (Status)Enum.Parse(typeof(Status), "Requested")
                 };
-            }          
+                if (LineItemEditModels.Count() > 0)
+                {
+                    foreach (var lineItemEditModel in LineItemEditModels)
+                    {
+                        if (lineItemEditModel.Receipt != null)
+                        {
+                            imageDataUrls.Clear();
+                            var format = "image/png";
+                            var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(lineItemEditModel.Receipt)}";
+                            imageDataUrls.Add(imageDataUrl);
+                            LineItemImageModel Lim = new LineItemImageModel { Id = lineItemEditModel.Id, ImageDataUrls = imageDataUrls.ToList() };
+                            LineItemImageModels.Add(Lim);
+                        }
+                    }
+                }
+            }
+        }
 
+        protected async Task OnInputFileChange(InputFileChangeEventArgs e, LineItemEditModel Liem)
+        {
+            var maxAllowedFiles = 1;
+            var format = "image/png";
+            if (e.GetMultipleFiles(maxAllowedFiles).Count > maxAllowedFiles)
+            { Message = "max Allowed Files are 5"; return; }
+            foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
+            {
+                //var resizedImageFile = await imageFile.RequestImageFileAsync(format, 100, 100);
+                //var buffer = new byte[resizedImageFile.Size];
+                //await resizedImageFile.OpenReadStream().ReadAsync(buffer);
+                
+                var buffer = new byte[imageFile.Size];
+                await imageFile.OpenReadStream().ReadAsync(buffer);
+                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+                if (imageDataUrl != null)
+                {
+                    imageDataUrls.Clear();
+                    imageDataUrls.Add(imageDataUrl);
+                }
 
+                buffer = new byte[imageFile.Size];
+                await imageFile.OpenReadStream().ReadAsync(buffer);
+
+                if (Claim.Id != 0)// for Edit
+                {
+                    LineItemEditModel.Receipt = buffer;
+                }
+                else
+                {
+                    LineItemEditModels[LineItemEditModels.IndexOf(Liem)].Receipt = buffer;
+                    LineItemImageModel Lim = new LineItemImageModel { Id = Liem.Id, ImageDataUrls = imageDataUrls.ToList() };
+                    LineItemImageModels.Add(Lim);
+                }
+                    
+                //var image = resizedImageFile.OptimizeImageSize(700, 700);
+            }
+        }
+
+        protected void Delete_Img_Click(string imageDataUrl)
+        {
+            imageDataUrls.Remove(imageDataUrl);
+            LineItemEditModel.Receipt = null;
         }
 
         protected async Task HandleValidSubmit()
@@ -157,7 +238,7 @@ namespace ExpenseClaimApp.Pages
             Claim.ApproverComments = ApproverComments;
             Claim.FinanceComments = FinanceComments;
             if (Claim.Id != 0)//Edit-Save
-            {                
+            {
                 await ClaimService.UpdateClaim(Claim);
                 StatusClass = "alert-success";
                 Message = "Employee updated successfully.";
@@ -194,9 +275,19 @@ namespace ExpenseClaimApp.Pages
             LineItemEditModel.Date = DateTime.Now;
             LineItemEditModel.CurrencyId = 7;//USD
             LineItemEditModels.Add(LineItemEditModel);
-            //NavigationManager.NavigateTo("/edit", true);
-            //CreateEditMode = true;
-            //CategoryEditModel = new CategoryEditModel();
+        }
+
+        protected string selectedImage;
+        protected void SelectImage(string imageDataUrl)
+        {
+            ShowDialog = true;
+            selectedImage = imageDataUrl;
+        }
+        public bool ShowDialog { get; set; }
+        protected void CloseModal()
+        {
+            ShowDialog = false;
+            StateHasChanged();
         }
         protected async Task BackToList()
         {
@@ -204,10 +295,16 @@ namespace ExpenseClaimApp.Pages
         }
         protected async Task Delete_Lineitem(LineItemEditModel item)
         {
+            LineItemImageModels.Remove(LineItemImageModels.Where(x => x.Id == LineItemEditModels.IndexOf(item)).FirstOrDefault());
             LineItemEditModels.Remove(item);
             ClaimEditModel.TotalAmount = LineItemEditModels.Select(x => x.USDAmount).Sum(x => x);
             //NavigationManager.NavigateTo("/list", true);
+        }
 
+        protected async Task Delete_Click(int SelectedId, int SeletedClaimId)
+        {
+            await LineItemService.DeleteLineItem(SelectedId);
+            NavigationManager.NavigateTo($"/edit/{SeletedClaimId}", true); 
         }
         protected async Task EventAmt(int i, ChangeEventArgs e)
         {
@@ -216,6 +313,6 @@ namespace ExpenseClaimApp.Pages
             LineItemEditModels[i].USDAmount = value;
             ClaimEditModel.TotalAmount = LineItemEditModels.Select(x => x.USDAmount).Sum(x => x);
             //StateHasChanged();
-        }      
+        }
     }
 }

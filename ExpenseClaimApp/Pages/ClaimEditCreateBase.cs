@@ -104,16 +104,21 @@ namespace ExpenseClaimApp.Pages
                     ApproverComments = ClaimEditModel.ApproverComments;
                 if (ClaimEditModel.FinanceComments != null)
                     FinanceComments = ClaimEditModel.FinanceComments;
+
                 if (Claim.LineItems.Count() > 0)
                 {
                     foreach (var LineItem in Claim.LineItems)
                     {
+                        LineItemEditModel = new LineItemEditModel();
+                        Mapper.Map(LineItem, LineItemEditModel);
+                        LineItemEditModels.Add(LineItemEditModel);
                         if (LineItem.Receipt != null)
                         {
                             imageDataUrls.Clear();
                             var format = "image/png";
                             var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(LineItem.Receipt)}";
                             imageDataUrls.Add(imageDataUrl);
+
                             LineItemImageModel Lim = new LineItemImageModel { Id = LineItem.Id, ImageDataUrls = imageDataUrls.ToList() };
                             LineItemImageModels.Add(Lim);
                         }
@@ -157,7 +162,7 @@ namespace ExpenseClaimApp.Pages
                 //var resizedImageFile = await imageFile.RequestImageFileAsync(format, 100, 100);
                 //var buffer = new byte[resizedImageFile.Size];
                 //await resizedImageFile.OpenReadStream().ReadAsync(buffer);
-                
+
                 var buffer = new byte[imageFile.Size];
                 await imageFile.OpenReadStream().ReadAsync(buffer);
                 var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
@@ -170,17 +175,18 @@ namespace ExpenseClaimApp.Pages
                 buffer = new byte[imageFile.Size];
                 await imageFile.OpenReadStream().ReadAsync(buffer);
 
+
+                LineItemEditModels[LineItemEditModels.IndexOf(Liem)].Receipt = buffer;
+                LineItemImageModel Lim = new LineItemImageModel { Id = Liem.Id, ImageDataUrls = imageDataUrls.ToList() };                
                 if (Claim.Id != 0)// for Edit
                 {
-                    LineItemEditModel.Receipt = buffer;
+                    LineItemImageModels[LineItemImageModels.IndexOf(LineItemImageModels.Where(x => x.Id == Liem.Id).FirstOrDefault())] = Lim;
                 }
                 else
                 {
-                    LineItemEditModels[LineItemEditModels.IndexOf(Liem)].Receipt = buffer;
-                    LineItemImageModel Lim = new LineItemImageModel { Id = Liem.Id, ImageDataUrls = imageDataUrls.ToList() };
                     LineItemImageModels.Add(Lim);
                 }
-                    
+
                 //var image = resizedImageFile.OptimizeImageSize(700, 700);
             }
         }
@@ -206,6 +212,15 @@ namespace ExpenseClaimApp.Pages
                 StatusClass = "alert-success";
                 Message = "Employee updated successfully.";
                 Saved = true;
+                if (LineItemEditModels.Count() > 0)
+                {
+                    foreach (var Item in LineItemEditModels)
+                    {
+                        Mapper.Map(Item, LineItem);
+                        LineItem.ClaimId = Claim.Id;
+                        await LineItemService.UpdateLineItem(LineItem);
+                    }
+                }
                 NavigationManager.NavigateTo("/list", true);
             }
             else//Create-Submit
@@ -242,7 +257,16 @@ namespace ExpenseClaimApp.Pages
                 await ClaimService.UpdateClaim(Claim);
                 StatusClass = "alert-success";
                 Message = "Employee updated successfully.";
-                Saved = true;
+                Saved = true;                
+                if (LineItemEditModels.Count() > 0)
+                {                    
+                    foreach (var Item in LineItemEditModels)
+                    {
+                        Mapper.Map(Item, LineItem);
+                        LineItem.ClaimId = Claim.Id;
+                        await LineItemService.UpdateLineItem(LineItem);
+                    }                   
+                }
                 NavigationManager.NavigateTo("/list", true);
             }
             else//Create-Save
@@ -287,8 +311,18 @@ namespace ExpenseClaimApp.Pages
         protected void CloseModal()
         {
             ShowDialog = false;
+            ShowImageDialog = false;
             StateHasChanged();
         }
+
+        protected LineItemEditModel Liem;
+        protected void AddImage(LineItemEditModel item)
+        {
+            ShowImageDialog = true;
+            Liem = item;
+        }
+        public bool ShowImageDialog { get; set; }
+
         protected async Task BackToList()
         {
             NavigationManager.NavigateTo("/list", true);
@@ -304,7 +338,7 @@ namespace ExpenseClaimApp.Pages
         protected async Task Delete_Click(int SelectedId, int SeletedClaimId)
         {
             await LineItemService.DeleteLineItem(SelectedId);
-            NavigationManager.NavigateTo($"/edit/{SeletedClaimId}", true); 
+            NavigationManager.NavigateTo($"/edit/{SeletedClaimId}", true);
         }
         protected async Task EventAmt(int i, ChangeEventArgs e)
         {
@@ -316,3 +350,77 @@ namespace ExpenseClaimApp.Pages
         }
     }
 }
+
+
+
+
+
+//  else //Only in case lineitems exist -> Edit
+//{
+
+//    @foreach(var item in ClaimEditModel.LineItems)
+//{
+//        var imageDataUrls = (LineItemImageModels.Where(x => x.Id == item.Id).Select(x => x.ImageDataUrls)).FirstOrDefault();
+
+//    < tr >
+//        < td >
+//            @item.Category.Name
+//        </ td >
+//        < td >
+//            @item.Payee
+//        </ td >
+//        < td >
+//            @item.Date
+//        </ td >
+//        < td >
+//            @item.Description
+//        </ td >
+//        < td >
+//            @item.Amount
+//        </ td >
+//        < td >
+//            @item.Currency.Name
+//        </ td >
+//        < td >
+//            @item.USDAmount
+//        </ td >
+//        < td >
+//            @if(item.Receipt != null && item.Receipt.Length > 0)
+//            {
+//            @foreach(var imageDataUrl in imageDataUrls)
+//                {
+//                    < div class= "card" style = "width:5rem;" >
+
+//                          < div class= "card-body" >
+
+//                               < img class= "rounded m-1" src = "@imageDataUrl" @onclick = "(e => SelectImage(imageDataUrl))"
+//                                 style = "width: 100%; object-fit: cover; padding-top: 10px;" type = "button" />
+
+//                              < button class= "btn btn-outline-primary btn-sm" type = "button" @onclick = "@(x => Delete_Img_Click(@imageDataUrl))" >
+//                                      x
+//                                  </ button >
+//                            @*< button @onclick = "(e => SelectImage(imageDataUrl))" data - toggle = "modal" data - target = "#receiptModal" class= "btn btn-outline-primary" type = "button" >
+
+//                                            </ button > *@
+//                        </ div >
+//                    </ div >
+//                }
+//            }
+//        </ td >
+//        < td >
+//            < a href = "@($"lineitem / edit /{ item.Id}
+//")" class= "btn btn-primary m-0" > Edit </ a >
+
+//< a href = "@($"lineitem / detail /{ item.Id}
+//")" class= "btn btn-primary m-0" > Detail </ a >
+
+//< button class= "btn btn-primary" type = "button" value = "@item.Id" @onclick = "@(x => Delete_Click(@item.Id, ClaimEditModel.Id))" >
+//Delete
+//</ button >
+
+//</ td >
+
+//</ tr >
+//}
+
+//            }

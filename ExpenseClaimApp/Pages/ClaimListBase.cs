@@ -1,4 +1,5 @@
-﻿using ExpenseClaimApp.Auth;
+﻿using AutoMapper;
+using ExpenseClaimApp.Auth;
 using ExpenseClaimApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,7 +21,8 @@ namespace ExpenseClaimApp.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject]
         public IClaimService ClaimService { get; set; }
-
+        [Inject]
+        public IMapper Mapper { get; set; }
         public List<GetAllClaimsResponse> Claims { get; set; }
 
         [Inject]
@@ -29,6 +31,14 @@ namespace ExpenseClaimApp.Pages
         public int ClaimId { get; set; }
 
         protected GlobalUse.Components.ConfirmBase DeleteConfirmation { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+
+        protected string titleFilter = string.Empty;
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadClaim();
+        }
 
         protected void Create_Click()
         {
@@ -48,17 +58,27 @@ namespace ExpenseClaimApp.Pages
                 NavigationManager.NavigateTo("/", true);
             }
         }
-
-        public string Name { get; set; }
-        public string Role { get; set; }
-        protected override async Task OnInitializedAsync()
+        protected async Task Filter()
         {
+            //currentPage = 1;
+            await LoadClaim();
+        }
 
+        protected async Task Clear()
+        {
+            titleFilter = string.Empty;
+            //currentPage = 1;
+            await LoadClaim();
+        }
+
+        //async Task LoadClaim(int page = 1, int quantityPerPage = 10)
+        protected async Task LoadClaim()
+        {
             var authenticationState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
             var AuthenticationStateUser = authenticationState.User;
-            Name = AuthenticationStateUser.Claims.Where(x=>x.Type.Equals("email")).FirstOrDefault().Value;
+            Name = AuthenticationStateUser.Claims.Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
             if (Name == null)
-            {   
+            {
                 Name = (await authenticationStateTask).User.Claims.Where(x => x.Type.Equals("email")).FirstOrDefault().Value;
             }
 
@@ -70,26 +90,31 @@ namespace ExpenseClaimApp.Pages
 
             if (authenticationState.User.IsInRole("Admin"))
             {
-                Role = "Admin";
-                Claims = (await ClaimService.GetClaims()).ToList();
+                   Role = "Admin";
+                if (titleFilter != string.Empty) { Claims = (await ClaimService.GetSearchClaims(titleFilter)).ToList(); }
+                else { Claims = (await ClaimService.GetClaims()).ToList(); } 
             }
             else if (authenticationState.User.IsInRole("Finance"))
             {
                 Role = "Finance";
-                Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Approved).ToList();
+                if (titleFilter != string.Empty) { Claims = (await ClaimService.GetSearchClaims(titleFilter)).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Approved).ToList(); }
+                else { Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Approved).ToList(); }
+                
             }
             else if (authenticationState.User.IsInRole("Approver"))
             {
                 Role = "Approver";
-                Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Requested).ToList();
+                if (titleFilter != string.Empty) { Claims = (await ClaimService.GetSearchClaims(titleFilter)).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Requested).ToList(); }
+                else { Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Status == StoreManager.Domain.Entities.Expense.Status.Requested).ToList(); }               
             }
             else if (authenticationState.User.IsInRole("Basic"))
             {
                 Role = "Basic";
-                Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Requester.Equals(Name)).ToList();
+                if (titleFilter != string.Empty) { Claims = (await ClaimService.GetSearchClaims(titleFilter)).ToList().Where(x => x.Requester.Equals(Name)).ToList(); }
+                else { Claims = (await ClaimService.GetClaims()).ToList().Where(x => x.Requester.Equals(Name)).ToList(); }
             }
 
-            foreach(var claim in AuthenticationStateUser.Claims)
+            foreach (var claim in AuthenticationStateUser.Claims)
             {
                 Console.WriteLine(claim.Type);
                 Console.WriteLine(claim.Value);

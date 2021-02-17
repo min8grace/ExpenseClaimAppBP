@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using StoreManager.Application.Features.Claims.Commands.Update;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
+using StoreManager.Application.Features.Claims.Queries.GetSearchClaims;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,14 @@ namespace ExpenseClaimApp.Services
         {
             return await JsonSerializer.DeserializeAsync<List<GetAllClaimsResponse>>
              (await httpClient.GetStreamAsync($"api/v{apiversion}/Claim"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        }
+
+        public async Task<List<GetAllClaimsResponse>> GetSearchClaims(string searchStr)
+        {
+            var IOStream = await httpClient.GetStreamAsync($"api/v{apiversion}/Claim/{searchStr}");
+            var jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            var result = await JsonSerializer.DeserializeAsync<List<GetAllClaimsResponse>>(IOStream, jsonSerializerOptions);
+            return result;
         }
 
         public async Task<Claim> GetClaimById(int id)

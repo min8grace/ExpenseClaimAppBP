@@ -20,5 +20,7 @@ namespace StoreManager.Application.Interfaces.Repositories
         Task UpdateAsync(Currency currency);
 
         Task DeleteAsync(Currency currency);
+
+
     }
 }

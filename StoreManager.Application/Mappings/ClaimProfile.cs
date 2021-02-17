@@ -4,6 +4,7 @@ using StoreManager.Application.Features.Claims.Queries.GetById;
 using StoreManager.Domain.Entities.Catalog;
 using AutoMapper;
 using StoreManager.Domain.Entities.Expense;
+using StoreManager.Application.Features.Claims.Queries.GetSearchClaims;
 
 namespace StoreManager.Application.Mappings
 {
@@ -12,6 +13,7 @@ namespace StoreManager.Application.Mappings
         public ClaimProfile()
         {
             CreateMap<CreateClaimCommand, Claim>().ReverseMap();
+            CreateMap<GetSearchClaimsResponse, Claim>().ReverseMap();
             CreateMap<GetClaimByIdResponse, Claim>().ReverseMap();
             CreateMap<GetAllClaimsResponse, Claim>().ReverseMap();
         }

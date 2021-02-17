@@ -3,7 +3,9 @@ using StoreManager.Application.Features.Categories.Commands.Create;
 using StoreManager.Application.Features.Categories.Commands.Update;
 using StoreManager.Application.Features.Claims.Commands.Create;
 using StoreManager.Application.Features.Claims.Commands.Update;
+using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
+using StoreManager.Application.Features.Claims.Queries.GetSearchClaims;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,13 @@ namespace ExpenseClaimApp.Models
     {
         public ClaimProfile()
         {
-
             CreateMap<Claim, ClaimEditModel>();
             CreateMap<ClaimEditModel, Claim>();
             CreateMap<GetClaimByIdResponse, Claim>();
             CreateMap<Claim, UpdateClaimCommand>();
             CreateMap<Claim, CreateClaimCommand>();
+            CreateMap<GetSearchClaimsResponse, GetAllClaimsResponse>();
+
         }
     }
 }

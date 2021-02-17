@@ -17,6 +17,21 @@
     </h2>
 </div>
 
+<div class="form-inline">
+    <label class="sr-only" for="filter-name">Filter</label>
+    <input type="text" class="form-control mb-2 mr-sm-2"
+           @bind="titleFilter"
+           placeholder="Filter by title" />
+    <button type="button" class="btn btn-outline-primary mr-sm-2 mb-2"
+            @onclick="Filter">
+        Filter
+    </button>
+    <button type="button" class="btn btn-outline-primary mb-2"
+            @onclick="Clear">
+        Clear
+    </button>
+</div>
+
 
 <table class="table">
     <thead>

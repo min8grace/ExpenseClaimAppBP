@@ -12,6 +12,7 @@ namespace StoreManager.Application.Interfaces.Repositories
         IQueryable<Claim> Claims { get; }
 
         Task<List<Claim>> GetListAsync();
+        Task<List<Claim>> GetSearchClaimsAsync(string searchString);
         
         Task<Claim> GetByIdAsync(int claimId);
 

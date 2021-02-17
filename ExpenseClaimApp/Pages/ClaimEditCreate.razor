@@ -8,10 +8,9 @@
     <ObjectGraphDataAnnotationsValidator />
     <ValidationSummary />
     @if (ClaimEditModel.Id != 0)
-    {<h3>Edit Claim</h3>}
+    {<h3>Edit Claim no. @ClaimEditModel.Id</h3>}
     else
     {<h3>Create Claim</h3>}
-
     <hr />
     <div class="form-group row">
         <label for="title" class="col-sm-2 col-form-label">
@@ -24,6 +23,7 @@
     </div>
 
     <fieldset disabled>
+
         <div class="form-group row">
             <label for="requester" class="col-sm-2 col-form-label">
                 Requester
@@ -32,6 +32,7 @@
                 <InputText id="requester" class="form-control" placeholder="Requester" style="width:800px" @bind-Value="ClaimEditModel.Requester" />
             </div>
         </div>
+
         <div class="form-group row">
             <label for="Approver" class="col-sm-2 col-form-label">
                 Approver

@@ -8,6 +8,7 @@ using StoreManager.Application.Features.Claims.Commands.Delete;
 using StoreManager.Application.Features.Claims.Commands.Update;
 using StoreManager.Application.Features.Claims.Queries.GetAllClaims;
 using StoreManager.Application.Features.Claims.Queries.GetById;
+using StoreManager.Application.Features.Claims.Queries.GetSearchClaims;
 using StoreManager.Domain.Entities.Expense;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,14 @@ namespace StoreManager.Api.Controllers.v1
             return claims;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{searchStr}")]
+        public async Task<ActionResult<List<GetAllClaimsResponse>>> GetSearchClaims(string searchStr)
+        {
+            var claims = (await _mediator.Send(new GetSearchClaimsQuery() { searchStr = searchStr })).Data;
+            return claims;
+        }
+
+        [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
             var claim = (_mediator.Send(new GetClaimByIdQuery() { Id = id })).Result.Data;

@@ -47,6 +47,23 @@ namespace StoreManager.Infrastructure.Repositories
             return await _repository.Entities.ToListAsync();
         }
 
+
+        public async Task<List<Claim>> GetSearchClaimsAsync(string searchStr)
+        {
+            IQueryable<Claim> claimsIQ = _repository.Entities;
+
+            if (!String.IsNullOrEmpty(searchStr))
+            {
+
+                claimsIQ = claimsIQ.Where(x => x.Title.Contains(searchStr));
+            }
+            return await claimsIQ.ToListAsync();
+
+
+
+           // return await _repository.Entities.ToListAsync();
+        }
+
         public async Task<int> InsertAsync(Claim claim)
         {
             await _repository.AddAsync(claim);

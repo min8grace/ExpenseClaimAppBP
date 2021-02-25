@@ -6,6 +6,7 @@
   <PropertyGroup>
     <DocumentationFile>StoreManager.Api.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
+    <UserSecretsId>9ce712ae-e3d2-496b-a9d9-3b81874f0b50</UserSecretsId>
     </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCoreHero.Extensions.Logging" Version="1.0.0" />

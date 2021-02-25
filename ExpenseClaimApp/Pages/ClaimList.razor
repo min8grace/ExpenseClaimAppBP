@@ -45,7 +45,7 @@
     </thead>
     <tbody>
 
-        @*Requested = 1, Approved = 2, Rejected = 3, Queried = 4, Financing = 5, RejectedByFinance = 7, Finished = 8, Saved = 99*@
+        @*Requested = 1, Approved = 2, Rejected = 3, Queried = 4, Processing = 5, RejectedByFinance = 7, Finished = 8, Cancel = 9, Saved = 99*@
         @if (Claims == null)
         {
             <tr>
@@ -69,9 +69,9 @@
                     <td>
                         @if (Role == "Basic")
                         {
-                            if (item.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||
+                            if (/*item.Status == StoreManager.Domain.Entities.Expense.Status.Rejected ||*/
                                 item.Status == StoreManager.Domain.Entities.Expense.Status.Queried ||
-                                item.Status == StoreManager.Domain.Entities.Expense.Status.RejectedByFinance ||
+                                //item.Status == StoreManager.Domain.Entities.Expense.Status.RejectedByFinance ||
                                 item.Status == StoreManager.Domain.Entities.Expense.Status.Saved)
                             {
                                 <a href="@($"/edit/{item.Id}")" class="btn btn-primary m-0">Edit</a>
